@@ -1,6 +1,6 @@
 # Chameleon Crawler
 
-Browser automation for [Chameleon](ghostwords/chameleon).
+Browser automation for [Chameleon](https://github.com/ghostwords/chameleon).
 
 
 ## Setup
@@ -14,7 +14,7 @@ sudo easy_install pip
 sudo pip install virtualenvwrapper
 ```
 
-Make sure `chromedriver` is in your $PATH. It's not on Ubuntu, so we have to fix it:
+Make sure `chromedriver` is in your $PATH. It's not on Ubuntu, so we have to fix that:
 ```
 sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/local/bin/chromedriver
 ```
