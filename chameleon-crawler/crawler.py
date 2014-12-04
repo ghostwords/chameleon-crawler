@@ -14,7 +14,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 #from urllib.error import URLError
 from xvfbwrapper import Xvfb
 
-from conftest import parse_args
+from args import parse_args
 
 #import socket
 
