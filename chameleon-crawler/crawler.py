@@ -14,28 +14,38 @@ from selenium.webdriver.support.ui import WebDriverWait
 #from urllib.error import URLError
 from xvfbwrapper import Xvfb
 
-import pytest
+from conftest import parse_args
+
 #import socket
 
 # TODO https://code.google.com/p/selenium/issues/detail?id=687
 #socket.setdefaulttimeout(15)
 
 class Crawler(object):
-    def setup_method(self, method):
-        self.xvfb = not pytest.config.getoption('--non-headless')
+    def __init__(self):
+        with self.selenium():
+            with open("urls.txt") as f:
+                for url in f:
+                    self.get(url)
+                    self.collect_data()
+
+    @contextmanager
+    def selenium(self):
+        args = parse_args()
+
+        self.xvfb = not args.non_headless
         if self.xvfb:
             self.vdisplay = Xvfb(width=1440, height=900)
             self.vdisplay.start()
 
         opts = webdriver.chrome.options.Options()
-        opts.add_extension(pytest.config.getoption('--crx'))
+        opts.add_extension(args.crx)
         self.driver = webdriver.Chrome(chrome_options=opts)
         self.driver.implicitly_wait(5)
 
         self.extension_id = self.get_extension_id()
 
-    def teardown_method(self, method):
-        self.collect_data()
+        yield
 
         self.driver.quit()
 
@@ -90,3 +100,6 @@ class Crawler(object):
             lambda drv: drv.execute_script(script),
             ("Timeout waiting for script to eval to True:\n%s" % script)
         )
+
+if __name__ == '__main__':
+    Crawler()
