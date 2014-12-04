@@ -18,6 +18,6 @@ fi
 
 trap 'deactivate $VIRTUALENV_NAME' EXIT
 
-pip install -r requirements.txt
+pip install -qr requirements.txt
 
 python3 src/crawler.py "${@}"
