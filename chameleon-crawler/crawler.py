@@ -23,11 +23,10 @@ from args import parse_args
 
 class Crawler(object):
     def __init__(self):
-        with self.selenium():
-            with open("urls.txt") as f:
-                for url in f:
-                    self.get(url)
-                    self.collect_data()
+        with self.selenium(), open("urls.txt") as f:
+            for url in f:
+                self.get(url)
+                self.collect_data()
 
     @contextmanager
     def selenium(self):
