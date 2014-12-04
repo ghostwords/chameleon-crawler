@@ -8,18 +8,18 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from argparse import ArgumentParser
 from glob import glob
 from os import path
+
+import argparse
 
 def is_valid_file(f, parser):
     if path.isfile(f):
         return f
-    else:
-        return parser.optparser.error("%s does not exist!" % f)
+    raise argparse.ArgumentTypeError("%s does not exist!" % f)
 
 def parse_args():
-    parser = ArgumentParser()
+    parser = argparse.ArgumentParser()
 
     parser.add_argument("--non-headless", action="store_true",
             help="do not use a virtual display")
