@@ -20,4 +20,4 @@ trap 'deactivate $VIRTUALENV_NAME' EXIT
 
 pip install -r requirements.txt
 
-python3 chameleon-crawler/crawler.py "${@}"
+python3 src/crawler.py "${@}"
