@@ -23,6 +23,8 @@ from args import parse_args
 
 class Crawler(object):
     def __init__(self):
+        self.args = parse_args()
+
         with self.selenium(), open("urls.txt") as f:
             for url in f:
                 self.get(url)
@@ -30,15 +32,13 @@ class Crawler(object):
 
     @contextmanager
     def selenium(self):
-        args = parse_args()
-
-        self.xvfb = not args.non_headless
+        self.xvfb = not self.args.non_headless
         if self.xvfb:
             self.vdisplay = Xvfb(width=1440, height=900)
             self.vdisplay.start()
 
         opts = webdriver.chrome.options.Options()
-        opts.add_extension(args.crx)
+        opts.add_extension(self.args.crx)
         self.driver = webdriver.Chrome(chrome_options=opts)
         self.driver.implicitly_wait(5)
 
