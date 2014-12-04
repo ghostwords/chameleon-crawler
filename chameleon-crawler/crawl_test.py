@@ -8,15 +8,16 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+from crawler import Crawler
+
 import pytest
-from basetest import BaseTest
 
 @pytest.yield_fixture
 def urls():
     with open("urls.txt") as f:
         yield f.readlines()
 
-class Test(BaseTest):
+class Test(Crawler):
     def test_visit_page(self, urls):
         for url in urls:
             self.get(url)

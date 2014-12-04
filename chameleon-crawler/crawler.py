@@ -8,18 +8,19 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-import pytest
-#import socket
 from contextlib import contextmanager
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 #from urllib.error import URLError
 from xvfbwrapper import Xvfb
 
+import pytest
+#import socket
+
 # TODO https://code.google.com/p/selenium/issues/detail?id=687
 #socket.setdefaulttimeout(15)
 
-class BaseTest(object):
+class Crawler(object):
     def setup_method(self, method):
         self.xvfb = not pytest.config.getoption('--non-headless')
         if self.xvfb:
