@@ -26,18 +26,19 @@ class Crawler(object):
         self.args = parse_args()
 
         with self.selenium(), open("urls.txt") as f:
-            # TODO unnecessary?
             # Chrome extension APIs just aren't there sometimes ...
             while True:
+                # window handle 0
                 self.get(
                     "chrome-extension://%s/_generated_background_page.html" %
                     self.extension_id)
 
-                if self.js("return chrome.hasOwnProperty('tabs');"):
+                if self.js("return chrome.hasOwnProperty('tabs')"):
                     break
 
+            # open new windows
             for url in f:
-                self.js('window.open("about:blank");')
+                self.js('window.open()')
                 self.driver.switch_to_window(self.driver.window_handles[-1])
                 self.get(url)
 
@@ -65,7 +66,8 @@ class Crawler(object):
             self.vdisplay.stop()
 
     def collect_data(self):
-        cwd = self.driver.current_window_handle
+        cwh = self.driver.current_window_handle
+        # switch to window 0 (our extension's background page)
         self.driver.switch_to_window(self.driver.window_handles[0])
 
         self.js("""chrome.tabs.query({}, function (tabs) {
@@ -79,12 +81,13 @@ class Crawler(object):
         });""")
 
         self.wait_for_script(
-            "return typeof result == 'object' && !!result;")
+            "return typeof result == 'object' && !!result")
         # TODO continue here
-        for tab_id, tab_data in self.js("return result;").items():
+        for tab_id, tab_data in self.js("return result").items():
             print(tab_id, ":", tab_data['domains'].keys())
 
-        self.driver.switch_to_window(cwd)
+        # switch back to original window
+        self.driver.switch_to_window(cwh)
 
     def get(self, url):
         self.driver.get(url)
