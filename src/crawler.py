@@ -58,12 +58,13 @@ class Crawler(object):
 
         self.extension_id = self.get_extension_id()
 
-        yield
+        try:
+            yield
+        finally:
+            self.driver.quit()
 
-        self.driver.quit()
-
-        if self.xvfb and self.vdisplay:
-            self.vdisplay.stop()
+            if self.xvfb and self.vdisplay:
+                self.vdisplay.stop()
 
     def collect_data(self):
         cwh = self.driver.current_window_handle
