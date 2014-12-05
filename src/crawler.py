@@ -26,9 +26,22 @@ class Crawler(object):
         self.args = parse_args()
 
         with self.selenium(), open("urls.txt") as f:
+            # TODO unnecessary?
+            # Chrome extension APIs just aren't there sometimes ...
+            while True:
+                self.get(
+                    "chrome-extension://%s/_generated_background_page.html" %
+                    self.extension_id)
+
+                if self.js("return chrome.hasOwnProperty('tabs');"):
+                    break
+
             for url in f:
+                self.js('window.open("about:blank");')
+                self.driver.switch_to_window(self.driver.window_handles[-1])
                 self.get(url)
-                self.collect_data()
+
+            self.collect_data()
 
     @contextmanager
     def selenium(self):
@@ -52,14 +65,8 @@ class Crawler(object):
             self.vdisplay.stop()
 
     def collect_data(self):
-        # Chrome extension APIs just aren't there sometimes ...
-        while True:
-            self.get(
-                "chrome-extension://%s/_generated_background_page.html" %
-                self.extension_id)
-
-            if self.js("return chrome.hasOwnProperty('tabs');"):
-                break
+        cwd = self.driver.current_window_handle
+        self.driver.switch_to_window(self.driver.window_handles[0])
 
         self.js("""chrome.tabs.query({}, function (tabs) {
             window.result = tabs.reduce(function (memo, tab) {
@@ -73,11 +80,14 @@ class Crawler(object):
 
         self.wait_for_script(
             "return typeof result == 'object' && !!result;")
-        print(self.js("return result;"))
+        # TODO continue here
+        for tab_id, tab_data in self.js("return result;").items():
+            print(tab_id, ":", tab_data['domains'].keys())
+
+        self.driver.switch_to_window(cwd)
 
     def get(self, url):
-        with self.new_window():
-            return self.driver.get(url)
+        self.driver.get(url)
 
     def get_extension_id(self):
         self.driver.get("chrome://extensions-frame/")
@@ -86,13 +96,6 @@ class Crawler(object):
 
     def js(self, script):
         return self.driver.execute_script(script)
-
-    @contextmanager
-    def new_window(self):
-        # TODO
-        #self.js('window.open("about:blank");')
-        #self.driver.switch_to_window(self.driver.window_handles[-1])
-        yield
 
     def wait_for_script(self, script, timeout=5):
         return WebDriverWait(self.driver, timeout, poll_frequency=0.5).until(
