@@ -31,6 +31,15 @@ sudo ldconfig
 Run `npm run dist` in Chameleon's checkout to produce a CRX build. Place the CRX build in chameleon-crawler's checkout. Run `run.sh` to perform a crawl.
 
 
+## Roadmap
+
+1. Fix Selenium hanging on get calls.
+2. Save results to SQLite.
+3. Compile list of URLs.
+4. Crawl URLs, manually analyze results to flag fingerprinters.
+5. Tweak the heuristic to minimize false negatives/positives.
+
+
 ## Code license
 
 Mozilla Public License Version 2.0
