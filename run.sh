@@ -20,4 +20,4 @@ trap 'deactivate $VIRTUALENV_NAME' EXIT
 
 pip install -qr requirements.txt
 
-python3 src/crawler.py "${@}"
+python3 src/run.py "${@}"

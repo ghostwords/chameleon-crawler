@@ -9,26 +9,32 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from contextlib import contextmanager
+from multiprocessing import current_process
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
-#from urllib.error import URLError
+from time import sleep
 from xvfbwrapper import Xvfb
 
-from args import parse_args
-
-#import socket
-
-# TODO https://code.google.com/p/selenium/issues/detail?id=687
-#socket.setdefaulttimeout(15)
 
 class Crawler(object):
-    def __init__(self):
-        self.args = parse_args()
+    def __init__(self, headless=False, **kwargs):
+        self.headless = headless
 
-        with self.selenium(), open("urls.txt") as f:
+        self.crx = kwargs['crx']
+        self.url_queue = kwargs['url_queue']
+        self.result_queue = kwargs['result_queue']
+
+        self.name = current_process().name
+
+        self.crawl()
+
+        print("%s is all done!" % self.name)
+
+    def crawl(self):
+        with self.selenium():
+            # open the extension's background page in window 0
             # Chrome extension APIs just aren't there sometimes ...
             while True:
-                # window handle 0
                 self.get(
                     "chrome-extension://%s/_generated_background_page.html" %
                     self.extension_id)
@@ -36,37 +42,58 @@ class Crawler(object):
                 if self.js("return chrome.hasOwnProperty('tabs')"):
                     break
 
-            # open new windows
-            for url in f:
+            # get a URL from the job queue
+            while not self.url_queue.empty():
+                url = self.url_queue.get()
+
+                # open a new window
                 self.js('window.open()')
+                # switch to the new window
                 self.driver.switch_to_window(self.driver.window_handles[-1])
+
+                # load the URL in the new window
                 self.get(url)
 
-            self.collect_data()
+                # wait to allow dynamic scripts to load/execute
+                # TODO smarter waiting
+                sleep(2)
+
+                self.collect_data()
+
+                # close the window opened above
+                self.js('window.close()')
+                # switch to window 0
+                self.driver.switch_to_window(self.driver.window_handles[0])
 
     @contextmanager
     def selenium(self):
-        self.xvfb = not self.args.non_headless
-        if self.xvfb:
-            self.vdisplay = Xvfb(width=1440, height=900)
-            self.vdisplay.start()
-
-        opts = webdriver.chrome.options.Options()
-        opts.add_extension(self.args.crx)
-        self.driver = webdriver.Chrome(chrome_options=opts)
-        self.driver.implicitly_wait(5)
+        self.startup()
 
         self.extension_id = self.get_extension_id()
 
         try:
             yield
         finally:
-            self.driver.quit()
+            self.shutdown()
 
-            if self.xvfb and self.vdisplay:
-                self.vdisplay.stop()
+    def startup(self):
+        if self.headless:
+            self.vdisplay = Xvfb(width=1440, height=900)
+            self.vdisplay.start()
+
+        opts = webdriver.chrome.options.Options()
+        opts.add_extension(self.crx)
+        self.driver = webdriver.Chrome(chrome_options=opts)
+        self.driver.implicitly_wait(5)
+
+    def shutdown(self):
+        self.driver.quit()
+        if self.vdisplay:
+            self.vdisplay.stop()
 
     def collect_data(self):
+        print("%s collecting data ..." % self.name)
+
         cwh = self.driver.current_window_handle
         # switch to window 0 (our extension's background page)
         self.driver.switch_to_window(self.driver.window_handles[0])
@@ -75,7 +102,7 @@ class Crawler(object):
             window.result = tabs.reduce(function (memo, tab) {
                 var data = tabData.get(tab.id);
                 if (data) {
-                    memo[tab.id] = data;
+                    memo[data.url] = data;
                 }
                 return memo;
             }, {});
@@ -83,14 +110,13 @@ class Crawler(object):
 
         self.wait_for_script(
             "return typeof result == 'object' && !!result")
-        # TODO continue here
-        for tab_id, tab_data in self.js("return result").items():
-            print(tab_id, ":", tab_data['domains'].keys())
+        self.result_queue.put(self.js("return result"))
 
         # switch back to original window
         self.driver.switch_to_window(cwh)
 
     def get(self, url):
+        print("%s fetching %s ..." % (self.name, url))
         self.driver.get(url)
 
     def get_extension_id(self):
@@ -106,6 +132,3 @@ class Crawler(object):
             lambda drv: drv.execute_script(script),
             ("Timeout waiting for script to eval to True:\n%s" % script)
         )
-
-if __name__ == '__main__':
-    Crawler()
