@@ -88,7 +88,7 @@ class Crawler(object):
 
     def shutdown(self):
         self.driver.quit()
-        if self.vdisplay:
+        if self.headless:
             self.vdisplay.stop()
 
     def collect_data(self):
