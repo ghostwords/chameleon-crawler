@@ -10,10 +10,10 @@
 
 from contextlib import contextmanager
 from multiprocessing import current_process
+from pyvirtualdisplay import Display
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from time import sleep
-from xvfbwrapper import Xvfb
 
 
 class CrawlerProcess(object):
@@ -85,18 +85,24 @@ class CrawlerProcess(object):
 
     def startup(self):
         if self.headless:
-            self.vdisplay = Xvfb(width=1440, height=900)
-            self.vdisplay.start()
+            self.display = Display(visible=0, size=(1440, 900))
+            self.display.start()
 
         opts = webdriver.chrome.options.Options()
         opts.add_extension(self.crx)
         self.driver = webdriver.Chrome(chrome_options=opts)
         self.driver.implicitly_wait(5)
 
+        # communicate chromedriver and Xvfb PIDs back to crawler.py
+        display_pid = self.display.pid if self.headless else None
+        # NOTE Firefox is different: self.driver.binary.process.pid
+        driver_pid = self.driver.service.process.pid
+        self.result_queue.put((driver_pid, display_pid))
+
     def shutdown(self):
         self.driver.quit()
         if self.headless:
-            self.vdisplay.stop()
+            self.display.stop()
 
     def collect_data(self):
         print("%s collecting data ..." % self.name)

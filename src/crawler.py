@@ -45,7 +45,6 @@ class Crawler(object):
                 print("%s timed out fetching %s" % (self.process.name, url))
                 num_timeouts += 1
 
-                # TODO fails to stop chromedriver/Xvfb when ???
                 self.stop_process()
 
                 if num_timeouts > 2:
@@ -77,6 +76,10 @@ class Crawler(object):
             }
         )
         self.process.start()
+        self.driver_pid, self.display_pid = self.result_queue.get()
 
     def stop_process(self):
         os.kill(self.process.pid, signal.SIGKILL)
+        os.kill(self.driver_pid, signal.SIGKILL)
+        if self.headless:
+            os.kill(self.display_pid, signal.SIGKILL)

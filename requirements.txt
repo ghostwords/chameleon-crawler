@@ -1,2 +1,2 @@
+pyvirtualdisplay==0.1.5
 selenium==2.44.0
-xvfbwrapper==0.2.4
