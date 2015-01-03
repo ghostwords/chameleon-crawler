@@ -61,6 +61,9 @@ class CrawlerProcess(object):
                 # load the URL in the new window
                 self.get(url)
 
+                # TODO detect errors ("unable to connect to the Internet",
+                # "This webpage is not available", ...)
+
                 # wait to allow dynamic scripts to load/execute
                 # TODO smarter waiting
                 sleep(2)
