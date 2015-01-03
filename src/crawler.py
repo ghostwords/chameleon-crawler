@@ -53,10 +53,12 @@ class Crawler(object):
                     self.glob_result_queue.put({
                         url: None
                     })
+                    reinserted = False
                 else:
                     self.glob_url_queue.put((url, num_timeouts))
+                    reinserted = True
 
-                if not self.glob_url_queue.empty():
+                if reinserted or not self.glob_url_queue.empty():
                     self.start_process()
 
             else:
