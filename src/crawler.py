@@ -25,6 +25,7 @@ class Crawler(object):
         self.headless = headless
 
         self.crx = kwargs['crx']
+        self.log = kwargs['logger']
         self.glob_url_queue = kwargs['url_queue']
         self.glob_result_queue = kwargs['result_queue']
 
@@ -42,13 +43,13 @@ class Crawler(object):
                 result = self.result_queue.get(True, TIMEOUT)
 
             except queue.Empty:
-                print("%s timed out fetching %s" % (self.process.name, url))
+                self.log("%s timed out fetching %s" % (self.process.name, url))
                 num_timeouts += 1
 
                 self.stop_process()
 
                 if num_timeouts > 2:
-                    print("Too many timeouts, giving up on %s" % url)
+                    self.log("Too many timeouts, giving up on %s" % url)
                     self.glob_result_queue.put({
                         url: None
                     })
@@ -65,20 +66,27 @@ class Crawler(object):
         self.url_queue.put(None)
 
     def start_process(self):
+        name = "Crawler %i" % self.id
+        self.log("Starting %s" % name)
+
         self.process = Process(
             target=CrawlerProcess,
-            name="Crawler %i" % self.id,
+            name=name,
             args=(self.headless,),
             kwargs={
                 'crx': self.crx,
+                'logger': self.log,
                 'url_queue': self.url_queue,
                 'result_queue': self.result_queue
             }
         )
+
         self.process.start()
+
         self.driver_pid, self.display_pid = self.result_queue.get()
 
     def stop_process(self):
+        self.log("Stopping %s" % self.process.name)
         os.kill(self.process.pid, signal.SIGKILL)
         os.kill(self.driver_pid, signal.SIGKILL)
         if self.headless:

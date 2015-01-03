@@ -21,6 +21,7 @@ class CrawlerProcess(object):
         self.headless = headless
 
         self.crx = kwargs['crx']
+        self.log = kwargs['logger']
         self.url_queue = kwargs['url_queue']
         self.result_queue = kwargs['result_queue']
 
@@ -28,7 +29,7 @@ class CrawlerProcess(object):
 
         self.crawl()
 
-        print("%s is all done!" % self.name)
+        self.log("%s is all done!" % self.name)
 
     def crawl(self):
         with self.selenium():
@@ -108,7 +109,7 @@ class CrawlerProcess(object):
             self.display.stop()
 
     def collect_data(self):
-        print("%s collecting data ..." % self.name)
+        self.log("%s collecting data ..." % self.name)
 
         cwh = self.driver.current_window_handle
         # switch to window 0 (our extension's background page)
@@ -132,7 +133,7 @@ class CrawlerProcess(object):
         self.driver.switch_to_window(cwh)
 
     def get(self, url):
-        print("%s fetching %s ..." % (self.name, url))
+        self.log("%s fetching %s ..." % (self.name, url))
         self.driver.get(url)
 
     def get_extension_id(self):

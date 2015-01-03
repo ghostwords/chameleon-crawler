@@ -13,6 +13,7 @@ from threading import Thread
 
 from args import parse_args
 from crawler import Crawler
+from utils import Logger
 
 
 def run():
@@ -21,6 +22,8 @@ def run():
 
     url_queue = Queue() # (url, num_timeouts) tuples
     result_queue = Queue()
+
+    log = Logger().log
 
     # read in URLs and populate the job queue
     with open("urls.txt") as f:
@@ -35,6 +38,7 @@ def run():
             args=(i, not args.non_headless),
             kwargs={
                 'crx': args.crx,
+                'logger': log,
                 'url_queue': url_queue,
                 'result_queue': result_queue
             }
@@ -49,7 +53,7 @@ def run():
     # print results
     while not result_queue.empty():
         for url, data in result_queue.get().items():
-            print(url, ":", data['domains'].keys()
+            log(url, ":", data['domains'].keys()
                 if data is not None else "TIMED OUT")
 
 
