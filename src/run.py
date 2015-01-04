@@ -10,11 +10,30 @@
 
 from multiprocessing import Queue
 from threading import Thread
+from time import sleep
 from urllib.parse import urlparse
 
 from args import parse_args
 from crawler import Crawler
 from utils import Logger
+
+
+def collect(result_queue, log):
+    while True:
+        if result_queue.empty():
+            sleep(0.01)
+            continue
+
+        result = result_queue.get()
+
+        if not result:
+            break
+
+        for url, data in result.items():
+            log(url, ":", data['domains'].keys()
+                if data is not None else "TIMED OUT")
+
+    log("Collecting finished.")
 
 
 def run():
@@ -53,15 +72,16 @@ def run():
         crawler.start()
         crawlers.append(crawler)
 
+    Thread(target=collect, args=(result_queue, log)).start()
+
     # wait for all browsers to finish
     for crawler in crawlers:
         crawler.join()
 
-    # print results
-    while not result_queue.empty():
-        for url, data in result_queue.get().items():
-            log(url, ":", data['domains'].keys()
-                if data is not None else "TIMED OUT")
+    # tell collector thread we are finished
+    result_queue.put(None)
+
+    log("Main process all done!")
 
 
 if __name__ == '__main__':
