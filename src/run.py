@@ -10,6 +10,7 @@
 
 from multiprocessing import Queue
 from threading import Thread
+from urllib.parse import urlparse
 
 from args import parse_args
 from crawler import Crawler
@@ -28,7 +29,10 @@ def run():
     # read in URLs and populate the job queue
     with args.urls:
         for url in args.urls:
-            url_queue.put((url.strip(), 0))
+            url = url.strip()
+            if not urlparse(url).scheme:
+                url = 'http://' + url
+            url_queue.put((url, 0))
 
     # launch browsers
     crawlers = []
