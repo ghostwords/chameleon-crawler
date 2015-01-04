@@ -35,6 +35,7 @@ def run():
             url_queue.put((url, 0))
 
     # launch browsers
+    # TODO gets stuck launching sometimes, seems to happen when n > 4 ...
     crawlers = []
     for i in range(1, args.num_crawlers + 1):
         crawler = Thread(
