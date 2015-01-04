@@ -38,7 +38,10 @@ class Crawler(object):
             self.url_queue.put(url)
 
             try:
-                result = self.result_queue.get(True, timeout)
+                result = self.result_queue.get(
+                    True,
+                    timeout * (num_timeouts + 1)
+                )
 
             except queue.Empty:
                 self.log("%s timed out fetching %s" % (self.process.name, url))
