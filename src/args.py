@@ -35,7 +35,7 @@ def parse_args():
             help="use a virtual display (default)")
     group.add_argument("--no-headless", dest='headless', action="store_false")
 
-    parser.add_argument("--timeout", metavar='SECONDS',
+    parser.add_argument("-t", "--timeout", metavar='SECONDS',
             type=int, default=20,
             help="seconds to wait for pages to finish "
                 "before timing out (default: %(default)s)")

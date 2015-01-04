@@ -17,7 +17,7 @@ from time import sleep
 
 
 class CrawlerProcess(object):
-    def __init__(self, headless=False, **kwargs):
+    def __init__(self, headless=True, **kwargs):
         self.headless = headless
 
         self.crx = kwargs['crx']

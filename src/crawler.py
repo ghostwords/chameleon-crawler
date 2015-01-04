@@ -18,7 +18,7 @@ import signal
 
 
 class Crawler(object):
-    def __init__(self, id, headless=False, timeout=20, **kwargs):
+    def __init__(self, id, headless=True, timeout=20, **kwargs):
         self.id = id
         self.headless = headless
 
@@ -72,9 +72,9 @@ class Crawler(object):
         self.process = Process(
             target=CrawlerProcess,
             name=name,
-            args=(self.headless,),
             kwargs={
                 'crx': self.crx,
+                'headless': self.headless,
                 'logger': self.log,
                 'url_queue': self.url_queue,
                 'result_queue': self.result_queue
