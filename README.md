@@ -30,7 +30,7 @@ sudo ldconfig
 
 Run `npm run dist` in Chameleon's checkout to produce a CRX package.
 
-Run `./src/run.py /path/to/chameleon.crx` to perform a crawl, or `./src/run.py -h` to see all optional arguments.
+Run `./src/run.py /path/to/chameleon.crx` to perform a crawl, or `./src/run.py -h` to see the optional arguments.
 
 
 ## Roadmap
