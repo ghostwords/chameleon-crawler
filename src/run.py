@@ -26,8 +26,8 @@ def run():
     log = Logger().log
 
     # read in URLs and populate the job queue
-    with open("urls.txt") as f:
-        for url in f:
+    with args.urls:
+        for url in args.urls:
             url_queue.put((url.strip(), 0))
 
     # launch browsers

@@ -22,7 +22,7 @@ def is_valid_file(f, parser):
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("crx", metavar='CHAMELEON_CRX_PATH',
+    parser.add_argument("crx", metavar='CHAMELEON_CRX_FILE_PATH',
             type=lambda x: is_valid_file(x, parser),
             help="path to Chameleon CRX package")
 
@@ -35,8 +35,13 @@ def parse_args():
             help="use a virtual display (default)")
     group.add_argument("--no-headless", dest='headless', action="store_false")
 
-    parser.add_argument("-t", "--timeout", type=int, default=20,
+    parser.add_argument("--timeout", metavar='SECONDS',
+            type=int, default=20,
             help="seconds to wait for pages to finish "
                 "before timing out (default: %(default)s)")
+
+    parser.add_argument("--urls", metavar='URL_FILE_PATH',
+            type=argparse.FileType('r'), default='urls.txt',
+            help="path to URL list file (default: %(default)s)")
 
     return parser.parse_args()
