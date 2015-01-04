@@ -87,6 +87,7 @@ class Crawler(object):
 
     def stop_process(self):
         self.log("Stopping %s" % self.process.name)
+        # TODO cross-platform termination (with psutil?)
         os.kill(self.process.pid, signal.SIGKILL)
         os.kill(self.driver_pid, signal.SIGKILL)
         if self.headless:
