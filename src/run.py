@@ -8,8 +8,7 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from multiprocessing import Queue
-from threading import Thread
+from multiprocessing import Process, Queue
 from time import sleep
 from urllib.parse import urlparse
 
@@ -54,10 +53,9 @@ def run():
             url_queue.put((url, 0))
 
     # launch browsers
-    # TODO gets stuck launching sometimes, seems to happen when n > 4 ...
     crawlers = []
     for i in range(1, args.num_crawlers + 1):
-        crawler = Thread(
+        crawler = Process(
             target=Crawler,
             args=(i,),
             kwargs={
@@ -72,13 +70,13 @@ def run():
         crawler.start()
         crawlers.append(crawler)
 
-    Thread(target=collect, args=(result_queue, log)).start()
+    Process(target=collect, args=(result_queue, log)).start()
 
     # wait for all browsers to finish
     for crawler in crawlers:
         crawler.join()
 
-    # tell collector thread we are finished
+    # tell collector process we are finished
     result_queue.put(None)
 
     log("Main process all done!")
