@@ -5,14 +5,14 @@ Browser automation for [Chameleon](https://github.com/ghostwords/chameleon).
 
 ## Setup
 
-Install Chromium, chromedriver, python3, xvfb, and then pip and virtualenvwrapper.
+Install Chromium, chromedriver, python3 and xvfb.
 
-For example, on Ubuntu:
+On Ubuntu:
 ```
 sudo apt-get install chromium-browser chromium-chromedriver python3 xvfb
-sudo easy_install pip
-sudo pip install virtualenvwrapper
 ```
+
+Then install the project's Python dependencies (documented in [requirements.txt](requirements.txt)). You might do this with `virtualenv` and `pip`, or maybe Docker. Note this is a Python 3 project.
 
 Make sure `chromedriver` is in your $PATH. It's not on Ubuntu, so we have to fix that:
 ```
@@ -28,7 +28,9 @@ sudo ldconfig
 
 ## Usage
 
-Run `npm run dist` in Chameleon's checkout to produce a CRX build. Place the CRX build in chameleon-crawler's checkout. Run `run.sh` to perform a crawl.
+Run `npm run dist` in Chameleon's checkout to produce a CRX build. Place the CRX build in chameleon-crawler's checkout.
+
+Run `python3 ./src/run.py` to perform a crawl.
 
 
 ## Roadmap
