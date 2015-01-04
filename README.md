@@ -28,9 +28,9 @@ sudo ldconfig
 
 ## Usage
 
-Run `npm run dist` in Chameleon's checkout to produce a CRX build. Place the CRX build in chameleon-crawler's checkout.
+Run `npm run dist` in Chameleon's checkout to produce a CRX package.
 
-Run `python3 ./src/run.py` to perform a crawl.
+Run `./src/run.py /path/to/chameleon.crx` to perform a crawl, or `./src/run.py -h` to see all optional arguments.
 
 
 ## Roadmap

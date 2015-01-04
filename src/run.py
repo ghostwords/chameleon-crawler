@@ -35,10 +35,12 @@ def run():
     for i in range(1, args.num_crawlers + 1):
         crawler = Thread(
             target=Crawler,
-            args=(i, not args.non_headless),
+            args=(i,),
             kwargs={
                 'crx': args.crx,
+                'headless': args.headless,
                 'logger': log,
+                'timeout': args.timeout,
                 'url_queue': url_queue,
                 'result_queue': result_queue
             }

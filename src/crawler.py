@@ -16,18 +16,16 @@ import os
 import queue
 import signal
 
-TIMEOUT = 10
-
 
 class Crawler(object):
-    def __init__(self, id, headless=False, **kwargs):
+    def __init__(self, id, headless=False, timeout=20, **kwargs):
         self.id = id
         self.headless = headless
 
         self.crx = kwargs['crx']
-        self.log = kwargs['logger']
         self.glob_url_queue = kwargs['url_queue']
         self.glob_result_queue = kwargs['result_queue']
+        self.log = kwargs['logger']
 
         self.url_queue = Queue()
         self.result_queue = Queue()
@@ -40,7 +38,7 @@ class Crawler(object):
             self.url_queue.put(url)
 
             try:
-                result = self.result_queue.get(True, TIMEOUT)
+                result = self.result_queue.get(True, timeout)
 
             except queue.Empty:
                 self.log("%s timed out fetching %s" % (self.process.name, url))

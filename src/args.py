@@ -8,7 +8,6 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from glob import glob
 from os import path
 
 import argparse
@@ -23,16 +22,21 @@ def is_valid_file(f, parser):
 def parse_args():
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--crx", metavar='CRX_FILE_PATH', action="store",
+    parser.add_argument("crx", metavar='CHAMELEON_CRX_PATH',
             type=lambda x: is_valid_file(x, parser),
-            default=max(glob("*.crx"), key=path.getmtime),
-            help="path to Chrome extension CRX package")
+            help="path to Chameleon CRX package")
 
     parser.add_argument("-n", dest='num_crawlers', type=int,
             choices=range(1, 9), default=2,
-            help="number of parallel processes to use")
+            help="parallel browser processes to use (default: %(default)s)")
 
-    parser.add_argument("--non-headless", action="store_true",
-            help="do not use a virtual display")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--headless", action="store_true", default=True,
+            help="use a virtual display (default)")
+    group.add_argument("--no-headless", dest='headless', action="store_false")
+
+    parser.add_argument("-t", "--timeout", type=int, default=20,
+            help="seconds to wait for pages to finish "
+                "before timing out (default: %(default)s)")
 
     return parser.parse_args()
