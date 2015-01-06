@@ -52,8 +52,8 @@ optional arguments:
 
 ## Roadmap
 
-1. Save results to SQLite.
 2. Compile list of URLs.
+1. Add module to interpret results.
 3. Crawl URLs, manually analyze results to flag fingerprinters.
 4. Tweak the heuristic to minimize false negatives/positives.
 

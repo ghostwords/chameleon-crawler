@@ -10,6 +10,8 @@
 
 from multiprocessing import Lock
 
+DATABASE_URL = 'sqlite:///crawl_results.sqlite3'
+
 
 class Logger(object):
     def __init__(self):

@@ -10,20 +10,30 @@
 
 from time import sleep
 
+from .utils import DATABASE_URL
 
-def collect(result_queue, log):
-    while True:
-        if result_queue.empty():
-            sleep(0.01)
-            continue
+import dataset
+import json
 
-        result = result_queue.get()
 
-        if not result:
-            break
+def collect(crawl_id, result_queue, log):
+    with dataset.connect(DATABASE_URL) as db:
+        while True:
+            if result_queue.empty():
+                sleep(0.01)
+                continue
 
-        for url, data in result.items():
-            log(url, ":", data['domains'].keys()
-                if data is not None else "TIMED OUT")
+            result = result_queue.get()
+
+            if not result:
+                break
+
+            url, data = list(result.items())[0]
+
+            db['result'].insert(dict(
+                crawl_id=crawl_id,
+                url=url,
+                data=json.dumps(data) if data else None
+            ))
 
     log("Collecting finished.")
