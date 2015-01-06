@@ -25,7 +25,7 @@ def collect(crawl_id, result_queue, log):
 
             result = result_queue.get()
 
-            if not result:
+            if result is None:
                 break
 
             url, data = list(result.items())[0]

@@ -51,7 +51,7 @@ class CrawlerProcess(object):
 
                 url = self.url_queue.get()
 
-                if not url:
+                if url is None:
                     break
 
                 # open a new window
