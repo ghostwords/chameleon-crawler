@@ -51,9 +51,7 @@ class Crawler(object):
 
                 if num_timeouts > 2:
                     self.log("Too many timeouts, giving up on %s" % url)
-                    self.glob_result_queue.put({
-                        url: None
-                    })
+                    self.glob_result_queue.put((url, None, None))
                     reinserted = False
                 else:
                     self.glob_url_queue.put((url, num_timeouts))
@@ -63,7 +61,10 @@ class Crawler(object):
                     self.start_process()
 
             else:
-                self.glob_result_queue.put(result)
+                page_url, data = None, None
+                if result:
+                    [(page_url, data)] = result.items()
+                self.glob_result_queue.put((url, page_url, data))
 
         # tell the process we are done
         self.url_queue.put(None)
