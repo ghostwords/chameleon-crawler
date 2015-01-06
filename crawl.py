@@ -9,30 +9,12 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from multiprocessing import Process, Queue
-from time import sleep
 from urllib.parse import urlparse
 
-from args import parse_args
-from crawler import Crawler
-from utils import Logger
-
-
-def collect(result_queue, log):
-    while True:
-        if result_queue.empty():
-            sleep(0.01)
-            continue
-
-        result = result_queue.get()
-
-        if not result:
-            break
-
-        for url, data in result.items():
-            log(url, ":", data['domains'].keys()
-                if data is not None else "TIMED OUT")
-
-    log("Collecting finished.")
+from crawler.args import parse_args
+from crawler.collector import collect
+from crawler.crawler_manager import Crawler
+from crawler.utils import Logger
 
 
 def run():

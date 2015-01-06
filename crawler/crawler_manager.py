@@ -10,7 +10,7 @@
 
 from multiprocessing import Process, Queue
 
-from crawler_process import CrawlerProcess
+from .crawler_process import CrawlerProcess
 
 import os
 import queue

@@ -28,7 +28,8 @@ def parse_args():
 
     parser.add_argument("-n", dest='num_crawlers', type=int,
             choices=range(1, 9), default=2,
-            help="parallel browser processes to use (default: %(default)s)")
+            help="how many browsers to use in parallel "
+                "(default: %(default)s)")
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument("--headless", action="store_true", default=True,
@@ -37,8 +38,8 @@ def parse_args():
 
     parser.add_argument("-t", "--timeout", metavar='SECONDS',
             type=int, default=20,
-            help="seconds to wait for pages to finish "
-                "before timing out (default: %(default)s)")
+            help="how many seconds to wait for pages to finish "
+                "loading before timing out (default: %(default)s)")
 
     parser.add_argument("--urls", metavar='URL_FILE_PATH',
             type=argparse.FileType('r'), default='urls.txt',

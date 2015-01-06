@@ -28,13 +28,12 @@ sudo ldconfig
 
 ## Usage
 
-Run `./src/run.py /path/to/chameleon.crx` to perform a crawl, or `./src/run.py -h` to see the optional arguments:
+Run `./crawl.py /path/to/chameleon.crx` to perform a crawl, or `./crawl.py -h` to see the optional arguments:
 
 ```
-$ ./src/run.py -h
-usage: run.py [-h] [-n {1,2,3,4,5,6,7,8}] [--headless | --no-headless]
-              [-t SECONDS] [--urls URL_FILE_PATH]
-              CHAMELEON_CRX_FILE_PATH
+usage: crawl.py [-h] [-n {1,2,3,4,5,6,7,8}] [--headless | --no-headless]
+                [-t SECONDS] [--urls URL_FILE_PATH]
+                CHAMELEON_CRX_FILE_PATH
 
 positional arguments:
   CHAMELEON_CRX_FILE_PATH
@@ -42,12 +41,12 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -n {1,2,3,4,5,6,7,8}  parallel browser processes to use (default: 2)
+  -n {1,2,3,4,5,6,7,8}  how many browsers to use in parallel (default: 2)
   --headless            use a virtual display (default)
   --no-headless
   -t SECONDS, --timeout SECONDS
-                        seconds to wait for pages to finish before timing out
-                        (default: 20)
+                        how many seconds to wait for pages to finish loading
+                        before timing out (default: 20)
   --urls URL_FILE_PATH  path to URL list file (default: urls.txt)
 ```
 
