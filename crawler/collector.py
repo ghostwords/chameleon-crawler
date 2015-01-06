@@ -33,7 +33,7 @@ def collect(crawl_id, result_queue, log):
             db['result'].insert(dict(
                 crawl_id=crawl_id,
                 crawl_url=crawl_url,
-                url=page_url,
+                page_url=page_url,
                 data=json.dumps(data) if data else None
             ))
 
