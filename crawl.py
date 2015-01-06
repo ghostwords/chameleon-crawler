@@ -36,10 +36,10 @@ def run():
 
     # launch browsers
     crawlers = []
-    for i in range(1, args.num_crawlers + 1):
+    for i in range(args.num_crawlers):
         crawler = Process(
             target=Crawler,
-            args=(i,),
+            args=(i + 1,),
             kwargs={
                 'crx': args.crx,
                 'headless': args.headless,
