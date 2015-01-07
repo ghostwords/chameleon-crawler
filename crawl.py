@@ -23,7 +23,10 @@ import dataset
 def run():
     # store start time, plus get an ID for this crawl
     with dataset.connect(DATABASE_URL) as db:
-        crawl_id = db['crawl'].insert(dict(start_time=datetime.now()))
+        crawl_id = db['crawl'].insert(dict(
+            start_time=datetime.now(),
+            end_time=None
+        ))
 
     # get commandline args
     args = parse_args()
