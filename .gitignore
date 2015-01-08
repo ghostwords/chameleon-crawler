@@ -2,4 +2,4 @@ __pycache__/
 *.crx
 *.sw?
 Session.vim
-crawl_results.sqlite3
+results.sqlite3
