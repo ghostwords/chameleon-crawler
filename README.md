@@ -52,10 +52,17 @@ optional arguments:
 
 ## Roadmap
 
-2. Compile list of URLs.
-1. Add module to interpret results.
-3. Crawl URLs, manually analyze results to flag fingerprinters.
-4. Tweak the heuristic to minimize false negatives/positives.
+1. Make crawling more robust:
+	- Handle alerts/popups
+	- Improve waiting for scripts to finish running
+	- Interact with pages a bit to make more scripts execute
+	- Look for and visit login pages?
+2. Add module to interpret results.
+3. Crawl (some of?) Alexa Global Top 1,000,000 Sites: http://s3.amazonaws.com/alexa-static/top-1m.csv.zip.
+4. Analyze results:
+	- Discover fingerprinters
+	- Confirm detection of known fingerprinters
+5. Tweak the heuristic to minimize false negatives/positives.
 
 
 ## Code license
