@@ -18,15 +18,19 @@ from crawler.crawler_manager import Crawler
 from crawler.utils import DATABASE_URL, Logger
 
 import dataset
+import sqlalchemy
 
 
 def run():
     # store start time, plus get an ID for this crawl
     with dataset.connect(DATABASE_URL) as db:
-        crawl_id = db['crawl'].insert(dict(
-            start_time=datetime.now(),
-            end_time=None
-        ))
+        crawl_id = db['crawl'].insert(
+            dict(
+                start_time=datetime.now(),
+                end_time=None
+            ),
+            types={'end_time': sqlalchemy.DateTime}
+        )
 
     # get commandline args
     args = parse_args()
