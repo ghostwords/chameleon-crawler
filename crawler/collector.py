@@ -13,33 +13,55 @@ from time import sleep
 from .utils import DATABASE_URL
 
 import dataset
-import json
 
 
 def collect(crawl_id, result_queue, log):
-    with dataset.connect(DATABASE_URL) as db:
-        while True:
-            if result_queue.empty():
-                sleep(0.01)
-                continue
+    db = dataset.connect(DATABASE_URL)
 
-            result = result_queue.get()
+    while True:
+        if result_queue.empty():
+            sleep(0.01)
+            continue
 
-            if result is None:
-                break
+        result = result_queue.get()
 
-            crawl_url, result = result
+        if result is None:
+            break
 
-            page_url, data = None, None
-            if result:
-                [(page_url, data)] = result.items()
-                data = json.dumps(data)
+        crawl_url, result = result
 
-            db['result'].insert(dict(
-                crawl_id=crawl_id,
-                crawl_url=crawl_url,
-                page_url=page_url,
-                data=data
-            ))
+        if not result:
+            with db:
+                db['result'].insert(dict(
+                    crawl_id=crawl_id,
+                    crawl_url=crawl_url
+                ))
+            continue
+
+        for page_url, page_data in result.items():
+            for domain, ddata in page_data['domains'].items():
+                for script_url, sdata in ddata['scripts'].items():
+                    with db:
+                        result_id = db['result'].insert(dict(
+                            crawl_id=crawl_id,
+                            crawl_url=crawl_url,
+                            page_url=page_url,
+                            domain=domain,
+                            script_url=script_url,
+                            canvas=sdata['canvas']['fingerprinting'],
+                            font_enum=sdata['fontEnumeration'],
+                            navigator_enum=sdata['navigatorEnumeration']
+                        ))
+
+                    # property access counts get saved in `property_count`
+                    rows = []
+                    for property, count in sdata['counts'].items():
+                        rows.append(dict(
+                            result_id=result_id,
+                            property=property,
+                            count=count
+                        ))
+                    with db:
+                        db['property_count'].insert_many(rows)
 
     log("Collecting finished.")
