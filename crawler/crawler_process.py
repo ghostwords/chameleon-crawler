@@ -12,7 +12,6 @@ from contextlib import contextmanager
 from multiprocessing import current_process
 from pyvirtualdisplay import Display
 from selenium import webdriver
-from selenium.common.exceptions import UnexpectedAlertPresentException
 from selenium.webdriver.support.ui import WebDriverWait
 from time import sleep
 
@@ -72,13 +71,8 @@ class CrawlerProcess(object):
 
                 self.collect_data()
 
-                # close the window opened above, handling any modal dialogs
-                while True:
-                    try:
-                        self.js('window.close()')
-                        break
-                    except UnexpectedAlertPresentException:
-                        self.driver.switch_to_alert().dismiss()
+                # close the window opened above
+                self.driver.close()
                 # switch to window 0
                 self.driver.switch_to_window(self.driver.window_handles[0])
 
