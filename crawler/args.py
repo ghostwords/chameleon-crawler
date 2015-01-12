@@ -26,15 +26,18 @@ def parse_args():
             type=lambda x: is_valid_file(x, parser),
             help="path to Chameleon CRX package")
 
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument("--headless", action="store_true", default=True,
+            help="use a virtual display (default)")
+    group.add_argument("--no-headless", dest='headless', action="store_false")
+
     parser.add_argument("-n", dest='num_crawlers', type=int,
             choices=range(1, 9), default=2,
             help="how many browsers to use in parallel "
                 "(default: %(default)s)")
 
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument("--headless", action="store_true", default=True,
-            help="use a virtual display (default)")
-    group.add_argument("--no-headless", dest='headless', action="store_false")
+    parser.add_argument("-q", "--quiet", action="store_true", default=False,
+            help="turn off standard output")
 
     parser.add_argument("-t", "--timeout", metavar='SECONDS',
             type=int, default=20,

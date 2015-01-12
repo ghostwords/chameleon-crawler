@@ -38,7 +38,7 @@ def run():
     url_queue = Queue() # (url, num_timeouts) tuples
     result_queue = Queue()
 
-    log = Logger().log
+    log = Logger().log if not args.quiet else lambda *args, **kwargs: None
 
     # read in URLs and populate the job queue
     with args.urls:

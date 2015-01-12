@@ -31,7 +31,7 @@ sudo ldconfig
 Run `./crawl.py /path/to/chameleon.crx` to perform a crawl, or `./crawl.py -h` to see the optional arguments:
 
 ```
-usage: crawl.py [-h] [-n {1,2,3,4,5,6,7,8}] [--headless | --no-headless]
+usage: crawl.py [-h] [--headless | --no-headless] [-n {1,2,3,4,5,6,7,8}] [-q]
                 [-t SECONDS] [--urls URL_FILE_PATH]
                 CHAMELEON_CRX_FILE_PATH
 
@@ -41,9 +41,10 @@ positional arguments:
 
 optional arguments:
   -h, --help            show this help message and exit
-  -n {1,2,3,4,5,6,7,8}  how many browsers to use in parallel (default: 2)
   --headless            use a virtual display (default)
   --no-headless
+  -n {1,2,3,4,5,6,7,8}  how many browsers to use in parallel (default: 2)
+  -q, --quiet           turn off standard output
   -t SECONDS, --timeout SECONDS
                         how many seconds to wait for pages to finish loading
                         before timing out (default: 20)
