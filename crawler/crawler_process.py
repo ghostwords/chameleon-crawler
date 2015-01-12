@@ -11,7 +11,9 @@
 from contextlib import contextmanager
 from multiprocessing import current_process
 from pyvirtualdisplay import Display
+from random import random
 from selenium import webdriver
+from selenium.common.exceptions import UnexpectedAlertPresentException
 from selenium.webdriver.support.ui import WebDriverWait
 from time import sleep
 
@@ -65,9 +67,19 @@ class CrawlerProcess(object):
                 # TODO detect errors ("unable to connect to the Internet",
                 # "This webpage is not available", ...)
 
-                # wait to allow dynamic scripts to load/execute
-                # TODO smarter waiting
-                sleep(2)
+                # scroll to encourage dynamic scripts to load/execute
+                # this takes between 3 and 13 seconds
+                for _ in range(10):
+                    sleep(0.3 + random())
+
+                    # handle modal dialogs (alerts)
+                    while True:
+                        try:
+                            self.js('window.scrollBy(0, %f)' %
+                                (random() * 500))
+                            break
+                        except UnexpectedAlertPresentException:
+                            self.driver.switch_to_alert().dismiss()
 
                 self.collect_data()
 
