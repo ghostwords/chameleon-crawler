@@ -9,6 +9,7 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 from datetime import datetime
+from random import shuffle
 from multiprocessing import Process, Queue
 from urllib.parse import urlparse
 
@@ -39,11 +40,14 @@ def run():
 
     # read in URLs and populate the job queue
     with args.urls:
-        for url in args.urls:
-            url = url.strip()
-            if not urlparse(url).scheme:
-                url = 'http://' + url
-            url_queue.put((url, 0))
+        urls = list(args.urls)
+        # randomize crawl order
+        shuffle(urls)
+    for url in urls:
+        url = url.strip()
+        if not urlparse(url).scheme:
+            url = 'http://' + url
+        url_queue.put((url, 0))
 
     log = Logger().log if not args.quiet else lambda *args, **kwargs: None
 
