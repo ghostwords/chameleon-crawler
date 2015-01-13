@@ -21,6 +21,9 @@ import dataset
 
 
 def run():
+    # get commandline args
+    args = parse_args()
+
     # initialize the db
     with open('results_schema.sql') as f:
         with dataset.connect(DATABASE_URL) as db:
@@ -31,13 +34,8 @@ def run():
     with dataset.connect(DATABASE_URL) as db:
         crawl_id = db['crawl'].insert(dict(start_time=datetime.now()))
 
-    # get commandline args
-    args = parse_args()
-
     url_queue = Queue() # (url, num_timeouts) tuples
     result_queue = Queue()
-
-    log = Logger().log if not args.quiet else lambda *args, **kwargs: None
 
     # read in URLs and populate the job queue
     with args.urls:
@@ -46,6 +44,8 @@ def run():
             if not urlparse(url).scheme:
                 url = 'http://' + url
             url_queue.put((url, 0))
+
+    log = Logger().log if not args.quiet else lambda *args, **kwargs: None
 
     # launch browsers
     crawlers = []
