@@ -86,10 +86,22 @@ class Crawler(object):
 
         self.driver_pid, self.display_pid = self.result_queue.get()
 
+    # TODO cross-platform termination (with psutil?)
     def stop_process(self):
         self.log("Stopping %s" % self.process.name)
-        # TODO cross-platform termination (with psutil?)
-        os.kill(self.process.pid, signal.SIGKILL)
-        os.kill(self.driver_pid, signal.SIGKILL)
+
+        try:
+            os.kill(self.process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            self.log("Crawler process not found.")
+
+        try:
+            os.kill(self.driver_pid, signal.SIGKILL)
+        except ProcessLookupError:
+            self.log("chromedriver process not found.")
+
         if self.headless:
-            os.kill(self.display_pid, signal.SIGKILL)
+            try:
+                os.kill(self.display_pid, signal.SIGKILL)
+            except ProcessLookupError:
+                self.log("Xvfb process not found.")
