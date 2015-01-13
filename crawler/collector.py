@@ -39,15 +39,15 @@ def collect(crawl_id, result_queue, log):
             continue
 
         for page_url, page_data in result.items():
-            for domain, ddata in page_data['domains'].items():
+            for script_domain, ddata in page_data['domains'].items():
                 for script_url, sdata in ddata['scripts'].items():
                     with db:
                         result_id = db['result'].insert(dict(
                             crawl_id=crawl_id,
                             crawl_url=crawl_url,
                             page_url=page_url,
-                            domain=domain,
                             script_url=script_url,
+                            script_domain=script_domain,
                             canvas=sdata['canvas']['fingerprinting'],
                             font_enum=sdata['fontEnumeration'],
                             navigator_enum=sdata['navigatorEnumeration']

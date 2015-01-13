@@ -18,19 +18,18 @@ from crawler.crawler_manager import Crawler
 from crawler.utils import DATABASE_URL, Logger
 
 import dataset
-import sqlalchemy
 
 
 def run():
+    # initialize the db
+    with open('results_schema.sql') as f:
+        with dataset.connect(DATABASE_URL) as db:
+            for sql in f.read().split(';'):
+                db.query(sql)
+
     # store start time, plus get an ID for this crawl
     with dataset.connect(DATABASE_URL) as db:
-        crawl_id = db['crawl'].insert(
-            dict(
-                start_time=datetime.now(),
-                end_time=None
-            ),
-            types={'end_time': sqlalchemy.DateTime}
-        )
+        crawl_id = db['crawl'].insert(dict(start_time=datetime.now()))
 
     # get commandline args
     args = parse_args()
@@ -66,6 +65,7 @@ def run():
         crawler.start()
         crawlers.append(crawler)
 
+    # start the collector process
     Process(target=collect, args=(crawl_id, result_queue, log)).start()
 
     # wait for all browsers to finish
