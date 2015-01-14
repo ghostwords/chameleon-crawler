@@ -43,7 +43,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --headless            use a virtual display (default)
   --no-headless
-  -n {1,2,3,4,5,6,7,8}  how many browsers to use in parallel (default: 2)
+  -n {1,2,3,4,5,6,7,8}  how many browsers to use in parallel (default: 4)
   -q, --quiet           turn off standard output
   -t SECONDS, --timeout SECONDS
                         how many seconds to wait for pages to finish loading

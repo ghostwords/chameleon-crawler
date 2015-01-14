@@ -32,7 +32,7 @@ def parse_args():
     group.add_argument("--no-headless", dest='headless', action="store_false")
 
     parser.add_argument("-n", dest='num_crawlers', type=int,
-            choices=range(1, 9), default=2,
+            choices=range(1, 9), default=4,
             help="how many browsers to use in parallel "
                 "(default: %(default)s)")
 
