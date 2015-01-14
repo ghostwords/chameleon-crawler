@@ -90,7 +90,12 @@ class CrawlerProcess(object):
 
                 # close the window opened above
                 self.driver.close()
-                # switch to window 0
+                # close any popups
+                for window in self.driver.window_handles:
+                    if window != self.driver.window_handles[0]:
+                        self.driver.switch_to_window(window)
+                        self.driver.close()
+                # switch back to the extension's background page
                 self.driver.switch_to_window(self.driver.window_handles[0])
 
     @contextmanager
