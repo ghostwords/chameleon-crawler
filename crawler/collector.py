@@ -28,13 +28,14 @@ def collect(crawl_id, result_queue, log):
         if result is None:
             break
 
-        crawl_url, result = result
+        crawl_url, error, result = result
 
         if not result:
             with db:
                 db['result'].insert(dict(
                     crawl_id=crawl_id,
-                    crawl_url=crawl_url
+                    crawl_url=crawl_url,
+                    error=error
                 ))
             continue
 

@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS result (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	crawl_id INTEGER NOT NULL,
 	crawl_url TEXT,
+	error TEXT,
 	page_url TEXT,
 	script_url TEXT,
 	script_domain TEXT,

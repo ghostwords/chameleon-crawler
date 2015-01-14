@@ -64,8 +64,12 @@ class CrawlerProcess(object):
                 # load the URL in the new window
                 self.get(url)
 
-                # TODO detect errors ("unable to connect to the Internet",
-                # "This webpage is not available", ...)
+                if not self.get_data():
+                    # must be a browser error page: "Unable to connect to the
+                    # Internet", "This webpage is not available", ...
+                    self.log("%s got a browser error." % self.name)
+                    self.result_queue.put(('BROWSER ERROR', None))
+                    continue
 
                 # scroll to encourage dynamic scripts to load/execute
                 # this takes between 3 and 13 seconds
@@ -81,7 +85,8 @@ class CrawlerProcess(object):
                         except UnexpectedAlertPresentException:
                             self.driver.switch_to_alert().dismiss()
 
-                self.collect_data()
+                self.log("%s getting data ..." % self.name)
+                self.result_queue.put((None, self.get_data()))
 
                 # close the window opened above
                 self.driver.close()
@@ -120,9 +125,7 @@ class CrawlerProcess(object):
         if self.headless:
             self.display.stop()
 
-    def collect_data(self):
-        self.log("%s collecting data ..." % self.name)
-
+    def get_data(self):
         cwh = self.driver.current_window_handle
         # switch to window 0 (our extension's background page)
         self.driver.switch_to_window(self.driver.window_handles[0])
@@ -139,10 +142,12 @@ class CrawlerProcess(object):
 
         self.wait_for_script(
             "return typeof result == 'object' && !!result")
-        self.result_queue.put(self.js("return result"))
+        data = self.js("return result")
 
         # switch back to original window
         self.driver.switch_to_window(cwh)
+
+        return data
 
     def get(self, url):
         self.log("%s fetching %s ..." % (self.name, url))
