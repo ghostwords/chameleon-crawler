@@ -40,6 +40,16 @@ def collect(crawl_id, result_queue, log):
             continue
 
         for page_url, page_data in result.items():
+            if not page_data['domains']:
+                # nothing found
+                with db:
+                    db['result'].insert(dict(
+                        crawl_id=crawl_id,
+                        crawl_url=crawl_url,
+                        page_url=page_url
+                    ))
+                continue
+
             for script_domain, ddata in page_data['domains'].items():
                 for script_url, sdata in ddata['scripts'].items():
                     with db:
