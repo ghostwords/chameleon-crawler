@@ -40,7 +40,7 @@ class Crawler(object):
             try:
                 error, result = self.result_queue.get(
                     True,
-                    timeout * (num_timeouts + 1)
+                    timeout * ((num_timeouts + 1) ** 2)
                 )
 
             except queue.Empty:
