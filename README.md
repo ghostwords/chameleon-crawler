@@ -51,6 +51,9 @@ optional arguments:
   --urls URL_FILE_PATH  path to URL list file (default: urls.txt)
 ```
 
+Run `./review.py` and visit the displayed URL to review crawl results.
+
+
 ## Roadmap
 
 1. Make crawling more robust:

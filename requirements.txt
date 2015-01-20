@@ -1,3 +1,4 @@
-dataset==0.5.5
+dataset==0.5.6
+flask==0.10.1
 pyvirtualdisplay==0.1.5
 selenium==2.44.0

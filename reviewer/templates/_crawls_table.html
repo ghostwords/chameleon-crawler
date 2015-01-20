@@ -1,0 +1,32 @@
+<table>
+	<tr>
+		<th>
+			crawl #
+		</th>
+		<th>
+			start time
+		</th>
+		<th>
+			number of URLs
+		</th>
+		<th>
+			duration (minutes)
+		</th>
+	</tr>
+	{% for crawl in crawls %}
+		<tr>
+			<td>
+				<a href="/crawl/{{ crawl.id }}">{{ crawl.id }}</a>
+			</td>
+			<td>
+				{{ crawl.start_time }}
+			</td>
+			<td>
+				{{ crawl.num_urls }}
+			</td>
+			<td>
+				{{ crawl.duration if crawl.duration is number else '-' }}
+			</td>
+		</tr>
+	{% endfor %}
+</table>

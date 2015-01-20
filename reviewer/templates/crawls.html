@@ -1,0 +1,18 @@
+{% extends "index.html" %}
+
+{% block body %}
+
+	<h2>All crawls</h2>
+
+	{% if crawls %}
+		{% include '_crawls_table.html' %}
+
+		<h2>Pages that time out</h2>
+
+		<h2>Pages that error out</h2>
+
+	{% else %}
+		No crawls found. Please run crawl.py first.
+	{% endif %}
+
+{% endblock %}
