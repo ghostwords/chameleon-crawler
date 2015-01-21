@@ -8,10 +8,18 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from crawler.utils import DATABASE_URL
-from reviewer.app import app
+from flask_failsafe import failsafe
+
+
+@failsafe
+def create_app():
+    from crawler.utils import DATABASE_URL
+    from reviewer.app import app
+
+    app.config['DATABASE_URL'] = DATABASE_URL
+
+    return app
 
 
 if __name__ == '__main__':
-    app.config['DATABASE_URL'] = DATABASE_URL
-    app.run(debug=True)
+    create_app().run(debug=True)
