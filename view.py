@@ -14,7 +14,7 @@ from flask_failsafe import failsafe
 @failsafe
 def create_app():
     from crawler.utils import DATABASE_URL
-    from reviewer.app import app
+    from viewer.app import app
 
     app.config['DATABASE_URL'] = DATABASE_URL
     app.jinja_env.trim_blocks = True
