@@ -17,6 +17,8 @@ def create_app():
     from reviewer.app import app
 
     app.config['DATABASE_URL'] = DATABASE_URL
+    app.jinja_env.trim_blocks = True
+    app.jinja_env.lstrip_blocks = True
 
     return app
 
