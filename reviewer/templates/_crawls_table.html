@@ -1,32 +1,28 @@
-<table>
-	<tr>
-		<th>
-			crawl #
-		</th>
-		<th>
-			start time
-		</th>
-		<th>
-			number of URLs
-		</th>
-		<th>
-			duration (minutes)
-		</th>
-	</tr>
-	{% for crawl in crawls %}
-		<tr>
-			<td>
-				<a href="/crawl/{{ crawl.id }}">{{ crawl.id }}</a>
-			</td>
-			<td>
-				{{ crawl.start_time }}
-			</td>
-			<td>
-				{{ crawl.num_urls }}
-			</td>
-			<td>
-				{{ crawl.duration if crawl.duration is number else '-' }}
-			</td>
-		</tr>
-	{% endfor %}
-</table>
+<div style="float:left">
+	<form>
+		<h2>Crawls</h2>
+		<table>
+			<tr>
+				<th><input type="checkbox" class="select-all"></th>
+				<th>crawl #</th>
+				<th>start time</th>
+				<th>number of URLs</th>
+				<th>duration (minutes)</th>
+			</tr>
+			{% for crawl in crawls %}
+				<tr>
+					<td>
+						<input type="checkbox" name="crawl" value="{{ crawl.id }}"
+							{{- ' checked' if crawl.id|string in request.values.getlist('crawl') }}>
+					</td>
+					<td><a href="/crawl/{{ crawl.id }}">{{ crawl.id }}</a></td>
+					<td>{{ crawl.start_time }}</td>
+					<td>{{ crawl.num_urls }}</td>
+					<td>{{ crawl.duration if crawl.duration is number else '-' }}</td>
+				</tr>
+			{% endfor %}
+		</table>
+		<br>
+		<input type="submit" value="Filter results">
+	</form>
+</div>

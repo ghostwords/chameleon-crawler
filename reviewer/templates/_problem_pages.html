@@ -1,0 +1,35 @@
+<div style="float:left">
+	<h2>Pages that time out</h2>
+	<table>
+		<tr>
+			<th>crawl URL</th>
+			<th>count</th>
+		</tr>
+		{% for page in problem_pages %}
+			{% if page.error == 'TIMEOUT' %}
+				<tr>
+					<td>{{ page.crawl_url }}</td>
+					<td>{{ page.count }}</td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+	</table>
+</div>
+
+<div style="float:left">
+	<h2>Pages that error out</h2>
+	<table>
+		<tr>
+			<th>crawl URL</th>
+			<th>count</th>
+		</tr>
+		{% for page in problem_pages %}
+			{% if page.error == 'BROWSER ERROR' %}
+				<tr>
+					<td>{{ page.crawl_url }}</td>
+					<td>{{ page.count }}</td>
+				</tr>
+			{% endif %}
+		{% endfor %}
+	</table>
+</div>
