@@ -1,24 +1,9 @@
 {% extends "index.html" %}
 
-{% block head %}
-	<style>
-div + div {
-	padding-left: 40px;
-}
-	</style>
-{% endblock %}
-
 {% block body %}
 
 	{% if crawls %}
 		{% include '_crawls_table.html' %}
-
-		{% if problem_pages %}
-			{% include '_problem_pages.html' %}
-		{% endif %}
-
-		<div style="clear:both"></div>
-
 	{% else %}
 		No crawls found. Please run crawl.py first.
 	{% endif %}

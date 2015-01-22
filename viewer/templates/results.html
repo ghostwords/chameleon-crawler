@@ -1,0 +1,15 @@
+{% extends "index.html" %}
+
+{% block body %}
+
+	<a href="/">back to list</a>
+	<hr>
+
+	{% include '_fingerprinters.html' %}
+
+	{% if problem_pages %}
+		<br>
+		{% include '_problem_pages.html' %}
+	{% endif %}
+
+{% endblock %}

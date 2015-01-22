@@ -1,0 +1,21 @@
+<h2>Fingerprinters</h2>
+<table>
+	<tr>
+		<th>crawl URL</th>
+		<th>script URL</th>
+		<th>font enumeration</th>
+		<th>navigator enumeration</th>
+		<th>canvas fingerprinting</th>
+		<th>property accesses</th>
+	</tr>
+	{% for fp in fingerprinters %}
+		<tr>
+			<td title="{{ fp.crawl_url }}">{{ fp.crawl_url }}</td>
+			<td title="{{ fp.script_url }}">{{ fp.script_domain }}</td>
+			<td title="font enumeration">{{ "●" if fp.font_enum }}</td>
+			<td title="navigator enumeration">{{ "●" if fp.navigator_enum }}</td>
+			<td title="canvas fingerprinting">{{ "●" if fp.canvas }}</td>
+			<td>{{ fp.property_accesses }}</td>
+		</tr>
+	{% endfor %}
+</table>

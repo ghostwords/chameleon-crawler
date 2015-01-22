@@ -1,28 +1,55 @@
-<div style="float:left">
-	<form>
-		<h2>Crawls</h2>
-		<table>
+<form action="/results">
+	<h2>Crawls</h2>
+	<table id="crawls-table">
+		<tr class="no-sort">
+			<th><input type="checkbox" class="select-all"></th>
+			<th>crawl #</th>
+			<th>start time</th>
+			<th>number of URLs</th>
+			<th>timeout rate</th>
+			<th>error rate</th>
+			<th>duration (minutes)</th>
+			<th>speed (URLs/min)</th>
+		</tr>
+		{% for crawl in crawls %}
 			<tr>
-				<th><input type="checkbox" class="select-all"></th>
-				<th>crawl #</th>
-				<th>start time</th>
-				<th>number of URLs</th>
-				<th>duration (minutes)</th>
+				<td>
+					<input type="checkbox" name="crawl" value="{{ crawl.id }}"
+						{{- ' checked' if crawl.id|string in request.values.getlist('crawl') }}>
+				</td>
+
+				<td>{{ crawl.id }}</td>
+
+				<td>{{ crawl.start_time }}</td>
+
+				<td>{{ crawl.num_urls }}</td>
+
+				<td>
+				{% with num_timeouts = errors[crawl.id]['TIMEOUT']|default(0) %}
+					{% if num_timeouts > 0 %}
+						{{ ((num_timeouts / crawl.num_urls * 100)|round(1)) }}%
+					{% endif %}
+				{% endwith %}
+				</td>
+
+				<td>
+				{% with num_errors = errors[crawl.id]['BROWSER ERROR']|default(0) %}
+					{% if num_errors > 0 %}
+						{{ ((num_errors / crawl.num_urls * 100)|round(1)) }}%
+					{% endif %}
+				{% endwith %}
+				</td>
+
+				<td>
+					{{ (crawl.duration / 60)|round|int if crawl.duration is number else '-' }}
+				</td>
+
+				<td>
+					{{ (crawl.num_urls / crawl.duration * 60)|round(1) if crawl.duration is number else '-' }}
+				</td>
 			</tr>
-			{% for crawl in crawls %}
-				<tr>
-					<td>
-						<input type="checkbox" name="crawl" value="{{ crawl.id }}"
-							{{- ' checked' if crawl.id|string in request.values.getlist('crawl') }}>
-					</td>
-					<td><a href="/crawl/{{ crawl.id }}">{{ crawl.id }}</a></td>
-					<td>{{ crawl.start_time }}</td>
-					<td>{{ crawl.num_urls }}</td>
-					<td>{{ crawl.duration if crawl.duration is number else '-' }}</td>
-				</tr>
-			{% endfor %}
-		</table>
-		<br>
-		<input type="submit" value="Filter results">
-	</form>
-</div>
+		{% endfor %}
+	</table>
+	<br>
+	<input type="submit" value="Show results">
+</form>

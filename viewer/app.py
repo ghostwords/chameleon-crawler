@@ -16,6 +16,35 @@ import dataset
 app = Flask(__name__)
 
 
+def get_fingerprinters(crawl_ids):
+    if crawl_ids:
+        in_clause = "AND crawl_id IN (%s)" % ','.join(
+            [str(int(id)) for id in crawl_ids])
+
+    sql = """SELECT
+            crawl_url,
+            script_url,
+            script_domain,
+            canvas,
+            font_enum,
+            navigator_enum
+        FROM result
+        WHERE (canvas = 1 OR font_enum = 1 OR navigator_enum = 1) %s
+        GROUP BY
+            crawl_url,
+            script_url,
+            script_domain,
+            canvas,
+            font_enum,
+            navigator_enum
+        ORDER BY
+            script_domain""" % (in_clause if crawl_ids else "")
+
+    with dataset.connect(app.config['DATABASE_URL']) as db:
+        result = db.query(sql)
+        return list(result)
+
+
 def get_problem_pages(crawl_ids):
     if crawl_ids:
         in_clause = "AND crawl_id IN (%s)" % ','.join(
@@ -32,15 +61,22 @@ def get_problem_pages(crawl_ids):
         return list(result)
 
 
-def get_crawl_breakdown(crawl_id):
+def get_crawl_errors():
+    errors = {}
+
     with dataset.connect(app.config['DATABASE_URL']) as db:
         result = db.query(
-            """SELECT error, COUNT(DISTINCT crawl_url) AS num_urls
-            FROM result WHERE crawl_id = :id GROUP BY error""",
-            id=crawl_id
+            """SELECT crawl_id, error, COUNT(DISTINCT crawl_url) num_urls
+            FROM result
+            WHERE error IS NOT NULL
+            GROUP BY crawl_id, error"""
         ) if 'result' in db.tables else []
 
-        return list(result)
+        for row in result:
+            errors.setdefault(
+                row['crawl_id'], {})[row['error']] = row['num_urls']
+
+    return errors
 
 
 def get_crawls():
@@ -48,10 +84,9 @@ def get_crawls():
         result = db.query(
             """SELECT
             crawl.id,
-            COUNT(DISTINCT crawl_url) AS num_urls,
-            (STRFTIME('%s', end_time) - STRFTIME('%s', start_time)) / 60
-                AS duration,
-            STRFTIME('%s', start_time) AS start_time
+            COUNT(DISTINCT crawl_url) num_urls,
+            (STRFTIME('%s', end_time) - STRFTIME('%s', start_time)) duration,
+            STRFTIME('%s', start_time) start_time
             FROM crawl
             JOIN result ON result.crawl_id = crawl.id
             GROUP BY crawl.id
@@ -61,12 +96,14 @@ def get_crawls():
         return list(result)
 
 
-@app.route('/crawl/<int:crawl_id>')
-def crawl(crawl_id):
+@app.route('/results')
+def results():
+    crawl_ids = [int(i) for i in request.values.getlist('crawl')]
+
     return render_template(
-        'crawl.html',
-        crawl_id=crawl_id,
-        crawl_breakdown=get_crawl_breakdown(crawl_id)
+        'results.html',
+        fingerprinters=get_fingerprinters(crawl_ids),
+        problem_pages=get_problem_pages(crawl_ids)
     )
 
 
@@ -81,7 +118,5 @@ def index():
     return render_template(
         'crawls.html',
         crawls=crawls,
-        problem_pages=get_problem_pages(
-            [int(i) for i in request.values.getlist('crawl')]
-        )
+        errors=get_crawl_errors()
     )
