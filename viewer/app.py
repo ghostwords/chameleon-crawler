@@ -17,6 +17,8 @@ app = Flask(__name__)
 
 
 def get_fingerprinters(crawl_ids):
+    fp = {}
+
     if crawl_ids:
         in_clause = "AND crawl_id IN (%s)" % ','.join(
             [str(int(id)) for id in crawl_ids])
@@ -40,11 +42,26 @@ def get_fingerprinters(crawl_ids):
         canvas,
         font_enum,
         navigator_enum,
-        num_properties
-    ORDER BY script_domain""".format(in_clause=in_clause if crawl_ids else "")
+        num_properties""".format(in_clause=in_clause if crawl_ids else "")
 
     with dataset.connect(app.config['DATABASE_URL']) as db:
-        return list(db.query(sql))
+        result = db.query(sql)
+
+        """ {
+            row['script_domain']: {
+                row['script_url']: [
+                    row,
+                    ...
+                ],
+                ...
+            },
+            ...
+        }"""
+        for row in result:
+            fp.setdefault(row['script_domain'], {}).setdefault(
+                row['script_url'], []).append(row)
+
+    return fp
 
 
 def get_problem_pages(crawl_ids):

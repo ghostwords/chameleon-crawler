@@ -10,11 +10,19 @@ a:hover {
 body {
 	color: #444;
 	font: normal 15px 'Helvetica Neue', 'Helvetica', sans-serif;
-	margin: 30px 20px;
+	margin: 30px auto;
+	width: 990px;
 }
 
 h1 {
 	margin: 0 0 15px;
+}
+
+h3 {
+	background-color: pink;
+	display: inline-block;
+	margin: 10px 0;
+	padding: 5px;
 }
 
 hr {
@@ -27,7 +35,6 @@ hr {
 table {
 	border: 1px solid #ddd;
 	border-collapse: collapse;
-	width: 100%;
 }
 
 tbody tr:nth-child(odd) {
@@ -42,12 +49,20 @@ th {
 
 td {
 	padding: 5px 10px;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	max-width: 300px;
 }
 
 .center {
 	text-align: center;
+}
+
+.script-url, .url {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 250px;
+}
+
+.script-url {
+	max-width: 900px;
+	padding-bottom: 5px;
 }
