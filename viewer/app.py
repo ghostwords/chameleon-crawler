@@ -21,28 +21,30 @@ def get_fingerprinters(crawl_ids):
         in_clause = "AND crawl_id IN (%s)" % ','.join(
             [str(int(id)) for id in crawl_ids])
 
-    sql = """SELECT
-            crawl_url,
-            script_url,
-            script_domain,
-            canvas,
-            font_enum,
-            navigator_enum
+    sql = """SELECT * FROM (
+        SELECT
+            result.*,
+            COUNT(pc.result_id) num_properties
         FROM result
-        WHERE (canvas = 1 OR font_enum = 1 OR navigator_enum = 1) %s
-        GROUP BY
-            crawl_url,
-            script_url,
-            script_domain,
-            canvas,
-            font_enum,
-            navigator_enum
-        ORDER BY
-            script_domain""" % (in_clause if crawl_ids else "")
+        LEFT JOIN property_count pc ON pc.result_id = result.id
+        WHERE 1 {in_clause}
+        GROUP BY COALESCE(pc.result_id, result.id)
+        HAVING num_properties > 3
+            OR canvas = 1
+            OR font_enum = 1
+            OR navigator_enum = 1
+    ) GROUP BY
+        crawl_url,
+        page_url,
+        script_url,
+        canvas,
+        font_enum,
+        navigator_enum,
+        num_properties
+    ORDER BY script_domain""".format(in_clause=in_clause if crawl_ids else "")
 
     with dataset.connect(app.config['DATABASE_URL']) as db:
-        result = db.query(sql)
-        return list(result)
+        return list(db.query(sql))
 
 
 def get_problem_pages(crawl_ids):

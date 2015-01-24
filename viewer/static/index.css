@@ -10,8 +10,7 @@ a:hover {
 body {
 	color: #444;
 	font: normal 15px 'Helvetica Neue', 'Helvetica', sans-serif;
-	margin: 30px auto;
-	width: 900px;
+	margin: 30px 20px;
 }
 
 h1 {
@@ -28,6 +27,7 @@ hr {
 table {
 	border: 1px solid #ddd;
 	border-collapse: collapse;
+	width: 100%;
 }
 
 tbody tr:nth-child(odd) {
@@ -41,9 +41,13 @@ th {
 }
 
 td {
-	white-space: nowrap;
 	padding: 5px 10px;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	max-width: 250px;
+	white-space: nowrap;
+	max-width: 300px;
+}
+
+.center {
+	text-align: center;
 }

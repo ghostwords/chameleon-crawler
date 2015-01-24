@@ -2,20 +2,24 @@
 <table>
 	<tr>
 		<th>crawl URL</th>
+		<th>page URL</th>
 		<th>script URL</th>
-		<th>font enumeration</th>
-		<th>navigator enumeration</th>
-		<th>canvas fingerprinting</th>
-		<th>property accesses</th>
+		<th width=45>can&shy;vas</th>
+		<th width=45>font enum.</th>
+		<th width=45>navi&shy;gator enum.</th>
+		<th width=45>pro&shy;per&shy;ties count</th>
 	</tr>
 	{% for fp in fingerprinters %}
 		<tr>
 			<td title="{{ fp.crawl_url }}">{{ fp.crawl_url }}</td>
-			<td title="{{ fp.script_url }}">{{ fp.script_domain }}</td>
-			<td title="font enumeration">{{ "●" if fp.font_enum }}</td>
-			<td title="navigator enumeration">{{ "●" if fp.navigator_enum }}</td>
-			<td title="canvas fingerprinting">{{ "●" if fp.canvas }}</td>
-			<td>{{ fp.property_accesses }}</td>
+			<td title="{{ fp.page_url }}">{{ fp.page_url if fp.page_url != fp.crawl_url else '-' }}</td>
+			<td title="{{ fp.script_url }}">
+				{{ fp.script_url|replace(fp.script_domain, '<b>'|safe + fp.script_domain + '</b>'|safe, 1) }}
+			</td>
+			<td title="canvas fingerprinting" class="center">{{ "●" if fp.canvas }}</td>
+			<td title="font enumeration" class="center">{{ "●" if fp.font_enum }}</td>
+			<td title="navigator enumeration" class="center">{{ "●" if fp.navigator_enum }}</td>
+			<td>{{ fp.num_properties if fp.num_properties > 0 }}</td>
 		</tr>
 	{% endfor %}
 </table>
