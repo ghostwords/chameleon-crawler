@@ -56,17 +56,12 @@ Run `./view.py` and visit the displayed URL to review crawl results.
 
 ## Roadmap
 
-1. Make crawling more robust:
-	- Handle alerts/popups
-	- Improve waiting for scripts to finish running
-	- Interact with pages a bit to make more scripts execute
-	- Look for and visit login pages?
-2. Add module to interpret results.
-3. Crawl (some of?) Alexa Global Top 1,000,000 Sites: http://s3.amazonaws.com/alexa-static/top-1m.csv.zip.
-4. Analyze results:
+1. Crawl Alexa Global Top 1,000,000 Sites: http://s3.amazonaws.com/alexa-static/top-1m.csv.zip
+2. Analyze results:
 	- Discover fingerprinters
 	- Confirm detection of known fingerprinters
-5. Tweak the heuristic to minimize false negatives/positives.
+3. Tweak the heuristic to minimize false negatives/positives.
+4. Create minisite to chart (the growth of?) fingerprinting across the Web.
 
 
 ## Code license
