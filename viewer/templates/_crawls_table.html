@@ -18,13 +18,13 @@
 						{{- ' checked' if crawl.id|string in request.values.getlist('crawl') }}>
 				</td>
 
-				<td>{{ crawl.id }}</td>
+				<td class="center">{{ crawl.id }}</td>
 
 				<td>{{ crawl.start_time }}</td>
 
-				<td>{{ crawl.num_urls }}</td>
+				<td class="right">{{ crawl.num_urls|number_format }}</td>
 
-				<td>
+				<td class="right">
 				{% with num_timeouts = errors[crawl.id]['TIMEOUT']|default(0) %}
 					{% if num_timeouts > 0 %}
 						{{ ((num_timeouts / crawl.num_urls * 100)|round(1)) }}%
@@ -32,7 +32,7 @@
 				{% endwith %}
 				</td>
 
-				<td>
+				<td class="right">
 				{% with num_errors = errors[crawl.id]['BROWSER ERROR']|default(0) %}
 					{% if num_errors > 0 %}
 						{{ ((num_errors / crawl.num_urls * 100)|round(1)) }}%
@@ -40,11 +40,11 @@
 				{% endwith %}
 				</td>
 
-				<td>
+				<td class="right">
 					{{ (crawl.duration / 60)|round|int if crawl.duration is number else '-' }}
 				</td>
 
-				<td>
+				<td class="right">
 					{{ (crawl.num_urls / crawl.duration * 60)|round(1) if crawl.duration is number else '-' }}
 				</td>
 			</tr>

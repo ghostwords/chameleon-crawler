@@ -1,4 +1,51 @@
+{% from 'helpers/form.html' import checkbox %}
+<hr>
+
 <h2>Fingerprinters</h2>
+
+<a href="#" id="filter-results-link"{{-
+	' style="display:none"'|safe if 'filter' in request.args }}>+ Filter results</a>
+<form id="filter-results-form"{{-
+	' style="display:none"'|safe if 'filter' not in request.args }}>
+	Show scripts that perform:
+	<br>
+	<br>
+
+	<label>
+		{{ checkbox('filter', 'canvas') }}
+		Canvas fingerprinting
+	</label>
+	<br>
+	<label>
+		{{ checkbox('filter', 'font_enum') }}
+		Font enumeration
+	</label>
+	<br>
+	<label>
+		{{ checkbox('filter', 'navigator_enum') }}
+		Navigator enumeration
+	</label>
+	<br>
+	<label>
+		{{ checkbox('filter', 'num_properties') }}
+		<input type="number" min="1" max="99" name="num_properties" value="{{ request.args.get('num_properties', '4') }}">
+		or more distinct property accesses
+	</label>
+	<br>
+	<br>
+
+	{% for crawl_id in request.args.getlist('crawl') %}
+		<input type="hidden" name="crawl" value="{{ crawl_id }}">
+	{% endfor %}
+
+	<input type="submit" value="Filter results">
+</form>
+
+<hr>
+
+{% if not fingerprinters %}
+	<p>No results.</p>
+{% endif %}
 {% for script_domain, domain_data in fingerprinters|dictsort %}
 	<h3>{{ script_domain }}</h3>
 	<br>
@@ -8,12 +55,12 @@
 		</div>
 		<table>
 			<tr>
-				<th width=250>crawl URL</th>
-				<th width=250>page URL</th>
-				<th>can&shy;vas</th>
-				<th>font enum.</th>
-				<th>navi&shy;gator enum.</th>
-				<th>num. pro&shy;per&shy;ties</th>
+				<th width=280>crawl URL</th>
+				<th width=280>page URL</th>
+				<th width=75>canvas</th>
+				<th width=75>font enum.</th>
+				<th width=75>nav. enum.</th>
+				<th width=75>num. props.</th>
 			</tr>
 			{% for fp in script_data %}
 				<tr>
@@ -28,7 +75,7 @@
 					<td title="canvas fingerprinting" class="center">{{ "●" if fp.canvas }}</td>
 					<td title="font enumeration" class="center">{{ "●" if fp.font_enum }}</td>
 					<td title="navigator enumeration" class="center">{{ "●" if fp.navigator_enum }}</td>
-					<td>{{ fp.num_properties if fp.num_properties > 0 }}</td>
+					<td class="center">{{ fp.num_properties if fp.num_properties > 0 }}</td>
 				</tr>
 			{% endfor %}
 		</table>

@@ -16,12 +16,28 @@ import dataset
 app = Flask(__name__)
 
 
-def get_fingerprinters(crawl_ids):
+def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
+        navigator_enum=True, num_properties=4):
     fp = {}
 
+    in_clause = ""
     if crawl_ids:
         in_clause = "AND crawl_id IN (%s)" % ','.join(
             [str(int(id)) for id in crawl_ids])
+
+    filters = []
+    if canvas:
+        filters.append("canvas = 1")
+    if font_enum:
+        filters.append("font_enum = 1")
+    if navigator_enum:
+        filters.append("navigator_enum = 1")
+    if num_properties:
+        filters.append("num_properties >= %s" % str(int(num_properties)))
+
+    having_clause = ""
+    if filters:
+        having_clause = "HAVING %s" % " OR ".join(filters)
 
     sql = """SELECT * FROM (
         SELECT
@@ -31,10 +47,7 @@ def get_fingerprinters(crawl_ids):
         LEFT JOIN property_count pc ON pc.result_id = result.id
         WHERE 1 {in_clause}
         GROUP BY COALESCE(pc.result_id, result.id)
-        HAVING num_properties > 3
-            OR canvas = 1
-            OR font_enum = 1
-            OR navigator_enum = 1
+        {having_clause}
     ) GROUP BY
         crawl_url,
         page_url,
@@ -42,7 +55,8 @@ def get_fingerprinters(crawl_ids):
         canvas,
         font_enum,
         navigator_enum,
-        num_properties""".format(in_clause=in_clause if crawl_ids else "")
+        num_properties""" \
+    .format(in_clause=in_clause, having_clause=having_clause)
 
     with dataset.connect(app.config['DATABASE_URL']) as db:
         result = db.query(sql)
@@ -115,13 +129,33 @@ def get_crawls():
         return list(result)
 
 
+@app.template_filter('number_format')
+def number_format(value):
+    return '{:,}'.format(value)
+
+
 @app.route('/results')
 def results():
-    crawl_ids = [int(i) for i in request.values.getlist('crawl')]
+    crawl_ids = [int(i) for i in request.args.getlist('crawl')]
+
+    filters = request.args.getlist('filter')
+
+    num_properties = 4
+    if filters:
+        if 'num_properties' in filters:
+            num_properties = request.args.get('num_properties')
+        else:
+            num_properties = False
 
     return render_template(
         'results.html',
-        fingerprinters=get_fingerprinters(crawl_ids),
+        fingerprinters=get_fingerprinters(
+            crawl_ids=crawl_ids,
+            canvas='canvas' in filters if filters else True,
+            font_enum='font_enum' in filters if filters else True,
+            navigator_enum='navigator_enum' in filters if filters else True,
+            num_properties=num_properties
+        ),
         problem_pages=get_problem_pages(crawl_ids)
     )
 
@@ -132,7 +166,7 @@ def index():
 
     for crawl in crawls:
         crawl['start_time'] = datetime.utcfromtimestamp(
-            int(crawl['start_time'])).strftime("%I:%M %p %b %d %Y")
+            int(crawl['start_time'])).strftime("%b %d %Y %I:%M %p")
 
     return render_template(
         'crawls.html',

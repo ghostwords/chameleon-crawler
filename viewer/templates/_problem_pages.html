@@ -9,7 +9,7 @@
 			{% if page.error == 'TIMEOUT' %}
 				<tr>
 					<td>{{ page.crawl_url }}</td>
-					<td>{{ page.count }}</td>
+					<td class="center">{{ page.count }}</td>
 				</tr>
 			{% endif %}
 		{% endfor %}
@@ -27,7 +27,7 @@
 			{% if page.error == 'BROWSER ERROR' %}
 				<tr>
 					<td>{{ page.crawl_url }}</td>
-					<td>{{ page.count }}</td>
+					<td class="center">{{ page.count }}</td>
 				</tr>
 			{% endif %}
 		{% endfor %}

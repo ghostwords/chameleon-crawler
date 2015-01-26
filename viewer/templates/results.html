@@ -3,7 +3,6 @@
 {% block body %}
 
 	<a href="/">back to list</a>
-	<hr>
 
 	{% include '_fingerprinters.html' %}
 
@@ -11,5 +10,15 @@
 		<br>
 		{% include '_problem_pages.html' %}
 	{% endif %}
+
+	<script>
+document.addEventListener('DOMContentLoaded', function () {
+	document.getElementById('filter-results-link').addEventListener('click', function (e) {
+		this.style.display = 'none';
+		document.getElementById('filter-results-form').style.display = '';
+		e.preventDefault();
+	});
+});
+	</script>
 
 {% endblock %}

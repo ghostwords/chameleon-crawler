@@ -10,6 +10,7 @@ a:hover {
 body {
 	color: #444;
 	font: normal 15px 'Helvetica Neue', 'Helvetica', sans-serif;
+	line-height: 1.3em;
 	margin: 30px auto;
 	width: 990px;
 }
@@ -42,12 +43,13 @@ tbody tr:nth-child(odd) {
 }
 
 th {
+	border: 1px solid #ddd;
 	font-size: 13px;
 	padding: 5px 10px;
-	text-align: left;
 }
 
 td {
+	border: 1px solid #ddd;
 	padding: 5px 10px;
 }
 
@@ -55,11 +57,15 @@ td {
 	text-align: center;
 }
 
+.right {
+	text-align: right;
+}
+
 .script-url, .url {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 250px;
+	max-width: 280px;
 }
 
 .script-url {
