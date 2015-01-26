@@ -25,7 +25,7 @@
 				<td class="right">{{ crawl.num_urls|number_format }}</td>
 
 				<td class="right">
-				{% with num_timeouts = errors[crawl.id]['TIMEOUT']|default(0) %}
+				{% with num_timeouts = error_counts[crawl.id]['TIMEOUT']|default(0) if crawl.id in error_counts else 0 %}
 					{% if num_timeouts > 0 %}
 						{{ ((num_timeouts / crawl.num_urls * 100)|round(1)) }}%
 					{% endif %}
@@ -33,7 +33,7 @@
 				</td>
 
 				<td class="right">
-				{% with num_errors = errors[crawl.id]['BROWSER ERROR']|default(0) %}
+				{% with num_errors = error_counts[crawl.id]['BROWSER ERROR']|default(0) if crawl.id in error_counts else 0 %}
 					{% if num_errors > 0 %}
 						{{ ((num_errors / crawl.num_urls * 100)|round(1)) }}%
 					{% endif %}

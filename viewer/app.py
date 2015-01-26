@@ -94,7 +94,7 @@ def get_problem_pages(crawl_ids):
         return list(result)
 
 
-def get_crawl_errors():
+def get_error_counts():
     errors = {}
 
     with dataset.connect(app.config['DATABASE_URL']) as db:
@@ -180,5 +180,5 @@ def index():
     return render_template(
         'crawls.html',
         crawls=crawls,
-        errors=get_crawl_errors()
+        error_counts=get_error_counts()
     )
