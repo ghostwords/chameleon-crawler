@@ -134,6 +134,16 @@ def number_format(value):
     return '{:,}'.format(value)
 
 
+@app.route('/errors')
+def errors():
+    crawl_ids = [int(i) for i in request.args.getlist('crawl')]
+
+    return render_template(
+        'errors.html',
+        problem_pages=get_problem_pages(crawl_ids)
+    )
+
+
 @app.route('/results')
 def results():
     crawl_ids = [int(i) for i in request.args.getlist('crawl')]
@@ -155,8 +165,7 @@ def results():
             font_enum='font_enum' in filters if filters else True,
             navigator_enum='navigator_enum' in filters if filters else True,
             num_properties=num_properties
-        ),
-        problem_pages=get_problem_pages(crawl_ids)
+        )
     )
 
 

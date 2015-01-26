@@ -1,4 +1,4 @@
-<form action="/results">
+<form>
 	<h2>Crawls</h2>
 	<table id="crawls-table">
 		<tr class="no-sort">
@@ -51,5 +51,7 @@
 		{% endfor %}
 	</table>
 	<br>
-	<input type="submit" value="Show results">
+	<input type="submit" formaction="/results" value="Show results">
+	&nbsp;
+	<input type="submit" formaction="/errors" value="Show failures">
 </form>
