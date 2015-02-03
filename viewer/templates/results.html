@@ -9,8 +9,25 @@
 	<script>
 document.addEventListener('DOMContentLoaded', function () {
 	document.getElementById('filter-results-link').addEventListener('click', function (e) {
+		// check defaults
+		var selector = []
+			defaults = [
+				'canvas',
+				'font_enum',
+				'navigator_enum',
+				'num_properties'
+			];
+		defaults.forEach(function (val) {
+			selector.push('input[type=checkbox][name=filter][value=' + val + ']');
+		});
+		var els = document.querySelectorAll(selector.join(", "));
+		for (var i = 0, num_els = els.length; i < num_els; i++) {
+			els[i].checked = true;
+		}
+
 		this.style.display = 'none';
 		document.getElementById('filter-results-form').style.display = '';
+
 		e.preventDefault();
 	});
 });
