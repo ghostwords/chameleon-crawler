@@ -25,21 +25,6 @@ def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
         in_clause = "AND crawl_id IN (%s)" % ','.join(
             [str(int(id)) for id in crawl_ids])
 
-    where = []
-    if webgl:
-        where.append("""(
-            pc.property = 'WebGLRenderingContext.prototype.getParameter'
-                OR pc.property =
-                    'WebGLRenderingContext.prototype.getSupportedExtensions'
-        )""")
-    if webrtc:
-        where.append("""(pc.property = 'RTCPeerConnection'
-            OR pc.property = 'webkitRTCPeerConnection')""")
-
-    where_clause = "WHERE 1 %s" % in_clause
-    if where:
-        where_clause = "{0} AND ({1})".format(where_clause, " OR ".join(where))
-
     filters = []
     if canvas:
         filters.append("canvas = 1")
@@ -54,15 +39,42 @@ def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
     if filters:
         having_clause = "HAVING %s" % " OR ".join(filters)
 
+    where = []
+    if webgl:
+        where.append("""(
+            pc.property = 'WebGLRenderingContext.prototype.getParameter'
+                OR pc.property =
+                    'WebGLRenderingContext.prototype.getSupportedExtensions'
+            )""")
+    if webrtc:
+        where.append("""(
+            pc.property = 'RTCPeerConnection'
+                OR pc.property = 'webkitRTCPeerConnection'
+            )""")
+
+    union_clause = ""
+    if where and filters:
+        union_clause = """UNION
+            SELECT
+                result.*,
+                COUNT(pc.result_id) num_properties
+            FROM result
+            JOIN property_count pc ON pc.result_id = result.id
+            WHERE %s
+            GROUP BY pc.result_id""" % " OR ".join(where)
+    elif where and not filters:
+        in_clause = "%s AND (%s)" % (in_clause, " OR ".join(where))
+
     sql = """SELECT * FROM (
         SELECT
             result.*,
             COUNT(pc.result_id) num_properties
         FROM result
         LEFT JOIN property_count pc ON pc.result_id = result.id
-        {where_clause}
+        WHERE 1 {in_clause}
         GROUP BY COALESCE(pc.result_id, result.id)
         {having_clause}
+        {union_clause}
     ) GROUP BY
         crawl_url,
         page_url,
@@ -70,8 +82,10 @@ def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
         canvas,
         font_enum,
         navigator_enum,
-        num_properties""" \
-    .format(where_clause=where_clause, having_clause=having_clause)
+        num_properties""".format(
+        in_clause=in_clause,
+        having_clause=having_clause,
+        union_clause=union_clause)
 
     with dataset.connect(app.config['DATABASE_URL']) as db:
         result = db.query(sql)
