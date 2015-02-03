@@ -28,8 +28,19 @@
 	<br>
 	<label>
 		{{ checkbox('filter', 'num_properties') }}
-		<input type="number" min="1" max="99" name="num_properties" value="{{ request.args.get('num_properties', '4') }}">
+		<input type="number" min="1" max="99" name="num_properties" value="
+			{{- request.args.get('num_properties', '4') if 'num_properties' in request.args.getlist('filter') else '4' }}">
 		or more distinct property accesses
+	</label>
+	<br>
+	<label>
+		{{ checkbox('filter', 'webgl') }}
+		WebGLRenderingContext's getParameter/getSupportedExtensions (WebGL)
+	</label>
+	<br>
+	<label>
+		{{ checkbox('filter', 'webrtc') }}
+		RTCPeerConnection initialization (WebRTC)
 	</label>
 	<br>
 	<br>

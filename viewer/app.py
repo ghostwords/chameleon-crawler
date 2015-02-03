@@ -17,13 +17,28 @@ app = Flask(__name__)
 
 
 def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
-        navigator_enum=True, num_properties=4):
+        navigator_enum=True, num_properties=4, webgl=False, webrtc=False):
     fp = {}
 
     in_clause = ""
     if crawl_ids:
         in_clause = "AND crawl_id IN (%s)" % ','.join(
             [str(int(id)) for id in crawl_ids])
+
+    where = []
+    if webgl:
+        where.append("""(
+            pc.property = 'WebGLRenderingContext.prototype.getParameter'
+                OR pc.property =
+                    'WebGLRenderingContext.prototype.getSupportedExtensions'
+        )""")
+    if webrtc:
+        where.append("""(pc.property = 'RTCPeerConnection'
+            OR pc.property = 'webkitRTCPeerConnection')""")
+
+    where_clause = "WHERE 1 %s" % in_clause
+    if where:
+        where_clause = "{0} AND ({1})".format(where_clause, " OR ".join(where))
 
     filters = []
     if canvas:
@@ -45,7 +60,7 @@ def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
             COUNT(pc.result_id) num_properties
         FROM result
         LEFT JOIN property_count pc ON pc.result_id = result.id
-        WHERE 1 {in_clause}
+        {where_clause}
         GROUP BY COALESCE(pc.result_id, result.id)
         {having_clause}
     ) GROUP BY
@@ -56,7 +71,7 @@ def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
         font_enum,
         navigator_enum,
         num_properties""" \
-    .format(in_clause=in_clause, having_clause=having_clause)
+    .format(where_clause=where_clause, having_clause=having_clause)
 
     with dataset.connect(app.config['DATABASE_URL']) as db:
         result = db.query(sql)
@@ -146,26 +161,33 @@ def errors():
 
 @app.route('/results')
 def results():
+    args = {}
+
     crawl_ids = [int(i) for i in request.args.getlist('crawl')]
 
+    if crawl_ids:
+        args['crawl_ids'] = crawl_ids
+
+    all_filters = {
+        'canvas',
+        'font_enum',
+        'navigator_enum',
+        'num_properties',
+        'webgl',
+        'webrtc'
+    }
     filters = request.args.getlist('filter')
 
-    num_properties = 4
-    if filters:
+    if set.intersection(all_filters, filters):
+        for filt in all_filters:
+            args[filt] = filt in filters
+
         if 'num_properties' in filters:
-            num_properties = request.args.get('num_properties')
-        else:
-            num_properties = False
+            args['num_properties'] = request.args.get('num_properties')
 
     return render_template(
         'results.html',
-        fingerprinters=get_fingerprinters(
-            crawl_ids=crawl_ids,
-            canvas='canvas' in filters if filters else True,
-            font_enum='font_enum' in filters if filters else True,
-            navigator_enum='navigator_enum' in filters if filters else True,
-            num_properties=num_properties
-        )
+        fingerprinters=get_fingerprinters(**args)
     )
 
 
