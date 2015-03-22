@@ -132,7 +132,7 @@ def get_error_counts():
             FROM result
             WHERE error IS NOT NULL
             GROUP BY crawl_id, error"""
-        ) if 'result' in db.tables else []
+        )
 
         for row in result:
             errors.setdefault(
@@ -143,7 +143,7 @@ def get_error_counts():
 
 def get_crawls():
     with dataset.connect(app.config['DATABASE_URL']) as db:
-        result = db.query(
+        return list(db.query(
             """SELECT
             crawl.id,
             COUNT(DISTINCT crawl_url) num_urls,
@@ -153,9 +153,7 @@ def get_crawls():
             JOIN result ON result.crawl_id = crawl.id
             GROUP BY crawl.id
             ORDER BY crawl.id DESC"""
-        ) if 'crawl' in db.tables else []
-
-        return list(result)
+        ))
 
 
 @app.template_filter('number_format')
