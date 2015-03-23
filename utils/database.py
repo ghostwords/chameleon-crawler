@@ -8,13 +8,13 @@
 # License, v. 2.0. If a copy of the MPL was not distributed with this
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-from multiprocessing import Lock
+import dataset
+
+DATABASE_URL = 'sqlite:///results.sqlite3'
 
 
-class Logger(object):
-    def __init__(self):
-        self.lock = Lock()
-
-    def log(self, *args, **kwargs):
-        with self.lock:
-            print(*args, **kwargs)
+def initialize_database():
+    with open('results_schema.sql') as f:
+        with dataset.connect(DATABASE_URL) as db:
+            for sql in f.read().split(';'):
+                db.query(sql)

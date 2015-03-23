@@ -16,7 +16,8 @@ from urllib.parse import urlparse
 from crawler.args import parse_args
 from crawler.collector import collect
 from crawler.crawler_manager import Crawler
-from crawler.utils import DATABASE_URL, Logger
+from crawler.utils import Logger
+from utils.database import DATABASE_URL, initialize_database
 
 import dataset
 
@@ -25,11 +26,7 @@ def run():
     # get commandline args
     args = parse_args()
 
-    # initialize the db
-    with open('results_schema.sql') as f:
-        with dataset.connect(DATABASE_URL) as db:
-            for sql in f.read().split(';'):
-                db.query(sql)
+    initialize_database()
 
     # store start time, plus get an ID for this crawl
     with dataset.connect(DATABASE_URL) as db:

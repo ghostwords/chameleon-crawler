@@ -10,7 +10,7 @@
 
 from time import sleep
 
-from .utils import DATABASE_URL
+from utils.database import DATABASE_URL
 
 import dataset
 
