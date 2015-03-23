@@ -1,9 +1,10 @@
-CREATE TABLE IF NOT EXISTS crawl (
+CREATE TABLE crawl (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	args TEXT,
 	start_time DATETIME NOT NULL,
 	end_time DATETIME
 );
-CREATE TABLE IF NOT EXISTS result (
+CREATE TABLE result (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	crawl_id INTEGER NOT NULL,
 	crawl_url TEXT,
@@ -16,7 +17,7 @@ CREATE TABLE IF NOT EXISTS result (
 	navigator_enum BOOLEAN,
     FOREIGN KEY(crawl_id) REFERENCES crawl(id)
 );
-CREATE TABLE IF NOT EXISTS property_count (
+CREATE TABLE property_count (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	result_id INTEGER NOT NULL,
 	property TEXT,
