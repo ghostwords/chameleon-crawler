@@ -20,6 +20,7 @@ from crawler.utils import Logger
 from utils.database import DATABASE_URL, initialize_database
 
 import dataset
+import sys
 
 
 def run():
@@ -28,9 +29,12 @@ def run():
 
     initialize_database()
 
-    # store start time, plus get an ID for this crawl
+    # store start time & args, plus get an ID for this crawl
     with dataset.connect(DATABASE_URL) as db:
-        crawl_id = db['crawl'].insert(dict(start_time=datetime.now()))
+        crawl_id = db['crawl'].insert(dict(
+            args=" ".join(sys.argv[1:]),
+            start_time=datetime.now()
+        ))
 
     url_queue = Queue() # (url, num_timeouts) tuples
     result_queue = Queue()
