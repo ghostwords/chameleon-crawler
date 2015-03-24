@@ -61,7 +61,7 @@
 	<h3>{{ script_domain }}</h3>
 	<br>
 	{% for script_url, script_data in domain_data|dictsort %}
-		<div class="script-url" title="{{ script_url }}">
+		<div class="script-url ellipsis" title="{{ script_url }}">
 			{{ script_url|replace(script_domain, '<b>'|safe + script_domain + '</b>'|safe, 1) }}
 		</div>
 		<table>
@@ -76,10 +76,10 @@
 			{% for fp in script_data %}
 				<tr>
 					<td>
-						<div class="url" title="{{ fp.crawl_url }}">{{ fp.crawl_url }}</div>
+						<div class="url ellipsis" title="{{ fp.crawl_url }}">{{ fp.crawl_url }}</div>
 					</td>
 					<td>
-						<div class="url" title="{{ fp.page_url }}">
+						<div class="url ellipsis" title="{{ fp.page_url }}">
 							{{ fp.page_url if fp.page_url != fp.crawl_url else '-' }}
 						</div>
 					</td>

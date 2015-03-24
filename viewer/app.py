@@ -146,6 +146,7 @@ def get_crawls():
         return list(db.query(
             """SELECT
             crawl.id,
+            crawl.args,
             COUNT(DISTINCT crawl_url) num_urls,
             (STRFTIME('%s', end_time) - STRFTIME('%s', start_time)) duration,
             STRFTIME('%s', start_time) start_time

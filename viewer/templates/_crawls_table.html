@@ -10,6 +10,7 @@
 			<th>error rate</th>
 			<th>duration (minutes)</th>
 			<th>speed (URLs/min)</th>
+			<th>crawl args</th>
 		</tr>
 		{% for crawl in crawls %}
 			<tr>
@@ -46,6 +47,10 @@
 
 				<td class="right">
 					{{ (crawl.num_urls / crawl.duration * 60)|round(1) if crawl.duration is number else '-' }}
+				</td>
+
+				<td style="width:120px" class="ellipsis" title="{{ crawl.args if crawl.args }}">
+					{{ crawl.args if crawl.args }}
 				</td>
 			</tr>
 		{% endfor %}

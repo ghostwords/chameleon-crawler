@@ -53,6 +53,12 @@ td {
 	padding: 5px 10px;
 }
 
+.ellipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
 .center {
 	text-align: center;
 }
@@ -62,9 +68,6 @@ td {
 }
 
 .script-url, .url {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
 	max-width: 280px;
 }
 
