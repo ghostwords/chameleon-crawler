@@ -19,7 +19,8 @@ MIGRATIONS = {
 
 
 def migrate_database(current_version):
-    # in a transaction
+    # TODO in a transaction, BUT pysqlite doesn't do DDL transactions correctly
+    # http://docs.sqlalchemy.org/en/latest/dialects/sqlite.html#transactional-ddl
     with dataset.connect(DATABASE_URL) as db:
         for i in range(current_version + 1, SCHEMA_VERSION + 1):
             for sql in MIGRATIONS[i]:
