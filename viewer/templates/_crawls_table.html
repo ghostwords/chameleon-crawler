@@ -52,8 +52,10 @@
 					{{ (crawl.num_urls / crawl.duration * 60)|round(1) if crawl.duration is number else '-' }}
 				</td>
 
-				<td style="width:120px" class="ellipsis" title="{{ crawl.args if crawl.args }}">
-					{{ crawl.args if crawl.args }}
+				<td title="{{ crawl.args if crawl.args }}">
+					<div style="width:120px" class="ellipsis">
+						{{ crawl.args if crawl.args }}
+					</div>
 				</td>
 			</tr>
 		{% endfor %}
