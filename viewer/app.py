@@ -10,10 +10,18 @@
 
 from datetime import datetime
 from flask import Flask, render_template, request
+from utils.database import DATABASE_URL, initialize_database
 
 import dataset
 
+
 app = Flask(__name__)
+
+app.config['DATABASE_URL'] = DATABASE_URL
+app.jinja_env.trim_blocks = True
+app.jinja_env.lstrip_blocks = True
+
+initialize_database()
 
 
 def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
