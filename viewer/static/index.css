@@ -55,6 +55,10 @@ td {
 	white-space: nowrap;
 }
 
+input[type=submit] {
+	padding: 5px 10px;
+}
+
 .ellipsis {
 	overflow: hidden;
 	text-overflow: ellipsis;
