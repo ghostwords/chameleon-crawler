@@ -46,11 +46,13 @@ th {
 	border: 1px solid #ddd;
 	font-size: 13px;
 	padding: 5px 10px;
+	white-space: nowrap;
 }
 
 td {
 	border: 1px solid #ddd;
 	padding: 5px 10px;
+	white-space: nowrap;
 }
 
 .ellipsis {
