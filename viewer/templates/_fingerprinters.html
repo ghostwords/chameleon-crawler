@@ -83,7 +83,16 @@
 							{{ fp.page_url if fp.page_url != fp.crawl_url else '-' }}
 						</div>
 					</td>
-					<td title="canvas fingerprinting" class="center">{{ "●" if fp.canvas }}</td>
+					<td title="canvas fingerprinting" class="center">
+						{% if fp.canvas_id %}
+							<a href="{{ canvases[fp.canvas_id] }}" target=_blank>
+								<img src="{{ canvases[fp.canvas_id] }}"
+									class="canvas-image-data" title="canvas image data">
+							</a>
+						{% elif fp.canvas %}
+							●
+						{% endif %}
+					</td>
 					<td title="font enumeration" class="center">{{ "●" if fp.font_enum }}</td>
 					<td title="navigator enumeration" class="center">{{ "●" if fp.navigator_enum }}</td>
 					<td class="center">{{ fp.num_properties if fp.num_properties > 0 }}</td>

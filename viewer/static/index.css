@@ -59,6 +59,11 @@ input[type=submit] {
 	padding: 5px 10px;
 }
 
+.canvas-image-data {
+	border: 2px dotted pink;
+	max-width: 75px;
+}
+
 .ellipsis {
 	overflow: hidden;
 	text-overflow: ellipsis;

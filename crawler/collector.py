@@ -53,6 +53,15 @@ def collect(crawl_id, result_queue, log):
             for script_domain, ddata in page_data['domains'].items():
                 for script_url, sdata in ddata['scripts'].items():
                     with db:
+                        canvas_id = None
+                        if 'dataURL' in sdata['canvas']:
+                            data_url = sdata['canvas']['dataURL']
+                            if data_url:
+                                db.query("""INSERT OR IGNORE INTO canvas (data_url)
+                                    VALUES (:data_url)""", data_url=data_url)
+                                canvas_id = db['canvas'].find_one(
+                                    data_url=data_url)['id']
+
                         result_id = db['result'].insert(dict(
                             crawl_id=crawl_id,
                             crawl_url=crawl_url,
@@ -60,6 +69,7 @@ def collect(crawl_id, result_queue, log):
                             script_url=script_url,
                             script_domain=script_domain,
                             canvas=sdata['canvas']['fingerprinting'],
+                            canvas_id=canvas_id,
                             font_enum=sdata['fontEnumeration'],
                             navigator_enum=sdata['navigatorEnumeration']
                         ))

@@ -24,9 +24,26 @@ app.jinja_env.lstrip_blocks = True
 initialize_database()
 
 
+def get_canvases(result_ids):
+    canvases = {}
+
+    sql = """SELECT canvas.id, data_url
+        FROM canvas
+        JOIN result ON result.canvas_id = canvas.id
+        WHERE result.id IN (%s)""" % ','.join(
+        [str(int(id)) for id in result_ids])
+
+    with dataset.connect(app.config['DATABASE_URL']) as db:
+        for row in db.query(sql):
+            canvases[row['id']] = row['data_url']
+
+    return canvases
+
+
 def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
         navigator_enum=True, num_properties=4, webgl=False, webrtc=False):
     fp = {}
+    result_ids = set()
 
     in_clause = ""
     if crawl_ids:
@@ -88,6 +105,7 @@ def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
         page_url,
         script_url,
         canvas,
+        canvas_id,
         font_enum,
         navigator_enum,
         num_properties""".format(
@@ -112,7 +130,9 @@ def get_fingerprinters(crawl_ids=None, canvas=True, font_enum=True,
             fp.setdefault(row['script_domain'], {}).setdefault(
                 row['script_url'], []).append(row)
 
-    return fp
+            result_ids.add(row['id'])
+
+    return fp, result_ids
 
 
 def get_problem_pages(crawl_ids):
@@ -206,9 +226,12 @@ def results():
         if 'num_properties' in filters:
             args['num_properties'] = request.args.get('num_properties')
 
+    fingerprinters, result_ids = get_fingerprinters(**args)
+
     return render_template(
         'results.html',
-        fingerprinters=get_fingerprinters(**args)
+        fingerprinters=fingerprinters,
+        canvases=get_canvases(result_ids)
     )
 
 

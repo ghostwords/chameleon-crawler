@@ -11,10 +11,19 @@
 import dataset
 
 DATABASE_URL = 'sqlite:///results.sqlite3'
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 MIGRATIONS = {
-    2: ["ALTER TABLE crawl ADD COLUMN args TEXT"]
+    2: ["ALTER TABLE crawl ADD COLUMN args TEXT"],
+    3: [
+        (
+            "CREATE TABLE canvas ("
+            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+            "data_url TEXT NOT NULL UNIQUE"
+            ")"
+        ),
+        "ALTER TABLE result ADD COLUMN canvas_id INTEGER REFERENCES canvas(id)"
+    ]
 }
 
 

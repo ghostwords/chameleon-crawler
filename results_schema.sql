@@ -13,14 +13,20 @@ CREATE TABLE result (
 	script_url TEXT,
 	script_domain TEXT,
 	canvas BOOLEAN,
+	canvas_id INTEGER,
 	font_enum BOOLEAN,
 	navigator_enum BOOLEAN,
-    FOREIGN KEY(crawl_id) REFERENCES crawl(id)
+	FOREIGN KEY(crawl_id) REFERENCES crawl(id),
+	FOREIGN KEY(canvas_id) REFERENCES canvas(id)
 );
 CREATE TABLE property_count (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	result_id INTEGER NOT NULL,
 	property TEXT,
 	count INTEGER,
-    FOREIGN KEY(result_id) REFERENCES result(id)
+	FOREIGN KEY(result_id) REFERENCES result(id)
+);
+CREATE TABLE canvas (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	data_url TEXT NOT NULL UNIQUE
 );
