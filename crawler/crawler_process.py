@@ -159,7 +159,8 @@ class CrawlerProcess(object):
         self.driver.get(url)
 
     def get_extension_id(self):
-        self.driver.get("chrome://extensions-frame/")
+        self.driver.get('chrome://extensions-frame/')
+        self.driver.find_element_by_id('toggle-dev-on').click()
         return self.driver.find_element_by_class_name(
             'extension-list-item-wrapper').get_attribute('id')
 
