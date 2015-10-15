@@ -13,7 +13,10 @@ from multiprocessing import current_process
 from pyvirtualdisplay import Display
 from random import random
 from selenium import webdriver
-from selenium.common.exceptions import UnexpectedAlertPresentException
+from selenium.common.exceptions import (
+    TimeoutException,
+    UnexpectedAlertPresentException
+)
 from selenium.webdriver.support.ui import WebDriverWait
 from time import sleep
 
@@ -145,8 +148,13 @@ class CrawlerProcess(object):
             }, {});
         });""")
 
-        self.wait_for_script(
-            "return typeof result == 'object' && !!result")
+        try:
+            self.wait_for_script(
+                "return typeof result == 'object' && !!result")
+        except TimeoutException:
+            self.log("%s failed to get data from the extension!" % self.name)
+            raise
+
         data = self.js("return result")
 
         # switch back to original window
